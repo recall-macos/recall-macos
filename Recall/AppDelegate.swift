@@ -48,7 +48,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         registerHotkey()
         syncShortcut()
         monitor.start()
-        AdManager.shared.start()
         Task { @MainActor in store.pruneExpired() }
         startExpirationTimer()
         // Don't force screenshot redirect — user controls this in Settings > Privacy.

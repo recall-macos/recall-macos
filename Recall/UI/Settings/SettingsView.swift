@@ -825,39 +825,18 @@ private struct SponsorSettingsRow: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            DetailSection(title: "Support Recall")
+            DetailSection(title: "Ads & Licensing")
 
-            // Current sponsor ad
-            DetailRow("Current Sponsor", subtitle: "Sponsors keep Recall free") {
-                if let ad = AdManager.shared.currentAd {
-                    Button {
-                        AdManager.shared.recordClick()
-                    } label: {
-                        Text(ad.headline)
-                            .font(.system(size: 11))
-                            .foregroundStyle(Color.accentColor)
-                            .lineLimit(1)
-                    }
-                    .buttonStyle(.plain)
-                }
+            DetailRow("Ad-supported",
+                      subtitle: "Recall is free — ads keep it that way") {
+                Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
             }
 
             DetailRow("Remove Ads",
-                      subtitle: "Enter a license key to hide all sponsor banners") {
-                Button("Enter License") { showLicenseEntry = true }
+                      subtitle: "Enter a license key to permanently hide all ads") {
+                Button("Enter License…") { showLicenseEntry = true }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
-            }
-
-            DetailRow("Become a Sponsor",
-                      subtitle: "Get your product in front of thousands of developers") {
-                Button("Get in Touch") {
-                    NSWorkspace.shared.open(
-                        URL(string: "mailto:neel@vermaclub.com?subject=Recall%20Sponsorship")!
-                    )
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
             }
         }
         .sheet(isPresented: $showLicenseEntry) {
