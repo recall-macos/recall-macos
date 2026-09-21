@@ -13,6 +13,9 @@
 
 ## Install
 
+> [!WARNING]
+> **First launch:** macOS may block Recall with "Apple could not verify…". Click Done, then go to **Applications → right-click Recall → Open → Open**. One-time only.
+
 1. Click **Download** above to get `Recall.dmg`
 2. Open the DMG and drag `Recall` into your **Applications** folder
 3. Open **Applications**, find Recall, and **right-click → Open**
