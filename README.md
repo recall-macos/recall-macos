@@ -13,12 +13,13 @@
 
 ## Install
 
-1. Click **Download** above and unzip `Recall.zip`
-2. Drag `Recall.app` to your **Applications** folder
-3. Right-click → **Open** → **Open** to bypass the first-launch security prompt
-4. Press **⌘⇧V** from any app
+1. Click **Download** above to get `Recall.dmg`
+2. Open the DMG and drag `Recall` into your **Applications** folder
+3. Open **Applications**, find Recall, and **right-click → Open**
+4. Click **Open** on the "Apple could not verify" prompt — this is a one-time step for apps outside the App Store
+5. Press **⌘⇧V** from any app
 
-> Recall is not notarized. The right-click Open step is only needed once.
+> Recall is not notarized. After the right-click Open step, it launches normally forever.
 
 ---
 
