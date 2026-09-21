@@ -23,7 +23,7 @@ final class AdManager: ObservableObject {
     @Published private(set) var logoImage: NSImage?
 
     // Remote config URL — swap this to your own CDN/endpoint
-    private let remoteURL = URL(string: "https://raw.githubusercontent.com/recall-macos/recall-macos/main/ads/current.json")!
+    private let remoteURL = URL(string: "https://raw.githubusercontent.com/Neel2code/Recall/main/ads/current.json")!
     private let refreshInterval: TimeInterval = 3600   // 1 hour
 
     private var refreshTask: Task<Void, Never>?

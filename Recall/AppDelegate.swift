@@ -14,6 +14,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let store: ClipboardStore
     let monitor: ClipboardMonitor
     let panelController = PanelController()
+    private var screenshotWatcher: ScreenshotWatcher?
 
     private var statusItem: NSStatusItem?
     private var panelWindow: ClipboardPanelWindow?
@@ -24,6 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuBarIconCancellable: AnyCancellable?
     private var shortcutCancellable: AnyCancellable?
     private var appearanceObservation: NSKeyValueObservation?
+    private var screenshotWatcherObserver: Any?
 
     // MARK: - Init
 
@@ -53,8 +55,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         AdManager.shared.start()
         Task { @MainActor in store.pruneExpired() }
         startExpirationTimer()
-        // Don't force screenshot redirect — user controls this in Settings > Privacy.
-        // Forcing it on every launch kills the macOS bottom-right thumbnail preview.
         syncLaunchAtLogin()
 
         if !settings.hasCompletedOnboarding {
@@ -85,6 +85,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         updateDockIcon()
         appearanceObservation = NSApp.observe(\.effectiveAppearance) { [weak self] _, _ in
             DispatchQueue.main.async { self?.updateDockIcon() }
+        }
+    }
+
+    // MARK: - Screenshot Watcher
+
+    func syncScreenshotWatcher() {
+        if ScreenshotCapture.isEnabled {
+            screenshotWatcher = ScreenshotWatcher(store: store)
+            screenshotWatcher?.start()
+        }
+        screenshotWatcherObserver = NotificationCenter.default.addObserver(
+            forName: .screenshotWatcherChanged, object: nil, queue: .main
+        ) { [weak self] note in
+            guard let self else { return }
+            let on = note.object as? Bool ?? false
+            if on {
+                self.screenshotWatcher = ScreenshotWatcher(store: self.store)
+                self.screenshotWatcher?.start()
+            } else {
+                self.screenshotWatcher?.stop()
+                self.screenshotWatcher = nil
+            }
         }
     }
 

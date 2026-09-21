@@ -1,8 +1,9 @@
 import Foundation
 
 extension Notification.Name {
-    static let recallKeyEvent   = Notification.Name("recallKeyEvent")
-    static let recallPanelShow  = Notification.Name("recallPanelShow")
+    static let recallKeyEvent          = Notification.Name("recallKeyEvent")
+    static let recallPanelShow         = Notification.Name("recallPanelShow")
+    static let screenshotWatcherChanged = Notification.Name("recallScreenshotWatcherChanged")
 }
 
 enum RecallKeyEvent: String {

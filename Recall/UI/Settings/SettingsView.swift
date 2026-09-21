@@ -227,10 +227,9 @@ private struct GeneralPane: View {
                     }
             }
 
-            // ADS: uncomment when AdSense is live
-            // if !settings.isPro {
-            //     SponsorSettingsRow(settings: settings)
-            // }
+            if !settings.isPro {
+                SponsorSettingsRow(settings: settings)
+            }
 
             DetailRow("Show Menu Bar Icon") {
                 Toggle("", isOn: $settings.showMenuBarIcon).labelsHidden()
@@ -273,9 +272,8 @@ private struct PrivacyPane: View {
                 Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
             }
 
-            DetailSection(title: "Screenshots")
-
-            ScreenshotSetupRow()
+            // DetailSection(title: "Screenshots")
+            // ScreenshotSetupRow()
 
             DetailSection(title: "Auto-Expire")
 
@@ -575,8 +573,8 @@ private struct ScreenshotSetupRow: View {
         DetailRow(
             "Capture Screenshots",
             subtitle: enabled
-                ? "⌘⇧3 / ⌘⇧4 screenshots go directly to your clipboard history"
-                : "Enable to redirect screenshots to clipboard so Recall captures them"
+                ? "⌘⇧3 / ⌘⇧4 screenshots save to Desktop and appear in Recall history"
+                : "Enable to add screenshots to Recall history (Desktop saves are unaffected)"
         ) {
             Toggle("", isOn: $enabled)
                 .labelsHidden()
@@ -588,23 +586,15 @@ private struct ScreenshotSetupRow: View {
 }
 
 enum ScreenshotCapture {
+    private static let key = "recallScreenshotWatcherEnabled"
+
     static var isEnabled: Bool {
-        let ud = UserDefaults(suiteName: "com.apple.screencapture")
-        return ud?.string(forKey: "target") == "clipboard"
+        UserDefaults.standard.bool(forKey: key)
     }
 
     static func setEnabled(_ on: Bool) {
-        if on {
-            let proc = Process()
-            proc.executableURL = URL(fileURLWithPath: "/usr/bin/defaults")
-            proc.arguments = ["write", "com.apple.screencapture", "target", "clipboard"]
-            try? proc.run(); proc.waitUntilExit()
-        } else {
-            let proc = Process()
-            proc.executableURL = URL(fileURLWithPath: "/usr/bin/defaults")
-            proc.arguments = ["delete", "com.apple.screencapture", "target"]
-            try? proc.run(); proc.waitUntilExit()
-        }
+        UserDefaults.standard.set(on, forKey: key)
+        NotificationCenter.default.post(name: .screenshotWatcherChanged, object: on)
     }
 }
 
@@ -684,7 +674,7 @@ private struct UpdateCheckRow: View {
     private func checkForUpdates() {
         status = .checking
         let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0"
-        let apiURL = URL(string: "https://api.github.com/repos/recall-macos/recall-macos/releases/latest")!
+        let apiURL = URL(string: "https://api.github.com/repos/Neel2code/Recall/releases/latest")!
         var req = URLRequest(url: apiURL)
         req.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         URLSession.shared.dataTask(with: req) { data, _, error in
@@ -826,18 +816,39 @@ private struct SponsorSettingsRow: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            DetailSection(title: "Ads & Licensing")
+            DetailSection(title: "Support Recall")
 
-            DetailRow("Ad-supported",
-                      subtitle: "Recall is free — ads keep it that way") {
-                Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+            // Current sponsor ad
+            DetailRow("Current Sponsor", subtitle: "Sponsors keep Recall free") {
+                if let ad = AdManager.shared.currentAd {
+                    Button {
+                        AdManager.shared.recordClick()
+                    } label: {
+                        Text(ad.headline)
+                            .font(.system(size: 11))
+                            .foregroundStyle(Color.accentColor)
+                            .lineLimit(1)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
 
             DetailRow("Remove Ads",
-                      subtitle: "Enter a license key to permanently hide all ads") {
-                Button("Enter License…") { showLicenseEntry = true }
+                      subtitle: "Enter a license key to hide all sponsor banners") {
+                Button("Enter License") { showLicenseEntry = true }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
+            }
+
+            DetailRow("Become a Sponsor",
+                      subtitle: "Get your product in front of thousands of developers") {
+                Button("Get in Touch") {
+                    NSWorkspace.shared.open(
+                        URL(string: "mailto:neel@vermaclub.com?subject=Recall%20Sponsorship")!
+                    )
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
             }
         }
         .sheet(isPresented: $showLicenseEntry) {
@@ -884,7 +895,7 @@ private struct SponsorSettingsRow: View {
 
             Button("Buy a License →") {
                 NSWorkspace.shared.open(
-                    URL(string: "https://github.com/recall-macos/recall-macos")!
+                    URL(string: "https://github.com/Neel2code/Recall")!
                 )
             }
             .buttonStyle(.plain)

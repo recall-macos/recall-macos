@@ -1,0 +1,1169 @@
+<html lang="en" class="theme-dark"><head><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Changelog - Sapphire</title>
+    <meta name="description" content="Release notes, performance refinements, and software updates for Sapphire on macOS.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Sapphire">
+    <meta property="og:title" content="Changelog - Sapphire">
+    <meta property="og:description" content="Release notes, performance refinements, and software updates for Sapphire on macOS.">
+    <meta property="og:image" content="https://sapphire-app.tech/sapphire-light.png">
+    <meta property="og:image:width" content="630">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://sapphire-app.tech/changelog">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Changelog - Sapphire">
+    <meta name="twitter:description" content="Release notes, performance refinements, and software updates for Sapphire on macOS.">
+    <meta name="twitter:image" content="https://sapphire-app.tech/sapphire-light.png">
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <link rel="preload" href="./style.css" as="style">
+    <link rel="preload" href="./sapphire-light.png" as="image">
+    <link rel="stylesheet" href="../styles/style.css">
+    
+    <!-- Immediate Theme Loader to prevent FOUC -->
+    <script>
+        const savedTheme = localStorage.getItem('sapphire-theme') || 'dark';
+        document.documentElement.className = `theme-${savedTheme}`;
+    </script>
+    
+    <!-- Dependencies: Tailwind, Material Symbols, Lenis & Marked JS -->
+    <script src="../scripts/cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+    <link rel="stylesheet" href="../styles/css2.css">
+    <script src="../scripts/lenis.min.js"></script>
+    <script src="../scripts/marked.min.js"></script>
+    <link rel="canonical" href="https://sapphire-app.tech/changelog">
+
+    <style>
+        .changelog-glass-panel {
+            background-color: var(--color-card-bg);
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border: 1px solid var(--color-card-border);
+            border-radius: 28px;
+        }
+
+        .release-item {
+            background-color: var(--color-card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--color-card-border);
+            border-radius: 28px;
+            padding: 2.5rem;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .release-item:hover {
+            background-color: var(--color-card-bg-hover);
+            border-color: var(--color-border-color);
+        }
+
+        .release-item.is-beta-item {
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+
+        .release-body h1, .release-body h2, .release-body h3 {
+            font-weight: 800;
+            color: var(--color-text-primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+        .release-body h1 { font-size: 1.35rem; }
+        .release-body h2 { font-size: 1.2rem; }
+        .release-body h3 { font-size: 1.05rem; }
+
+        .release-body p {
+            font-size: 0.925rem;
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .release-body ul, .release-body ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.925rem;
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+        }
+        .release-body ul { list-style-type: disc; }
+        .release-body ol { list-style-type: decimal; }
+
+        .release-body li {
+            margin-bottom: 0.35rem;
+        }
+
+        .release-body code {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--color-secondary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.375rem;
+            font-size: 0.825rem;
+            color: var(--color-text-primary);
+        }
+
+        .release-body pre {
+            background-color: var(--color-secondary);
+            padding: 1.25rem;
+            border-radius: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1.25rem;
+            border: 1px solid var(--color-card-border);
+        }
+
+        .release-body a {
+            color: var(--color-accent-solid);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .asset-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 9999px;
+            background-color: var(--color-secondary);
+            border: 1px solid var(--color-card-border);
+            color: var(--color-text-primary);
+            font-size: 0.8rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .asset-link:hover {
+            background-color: var(--color-secondary-hover);
+            border-color: var(--color-border-color);
+            transform: translateY(-2px);
+        }
+
+        .header-nav-link.is-active {
+            color: var(--color-text-primary) !important;
+            background-color: var(--color-secondary-hover) !important;
+            border: 1px solid var(--color-border-color) !important;
+        }
+    </style>
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Changelog - Sapphire",
+      "description": "Release notes, performance refinements, and software updates for Sapphire on macOS.",
+      "url": "https://sapphire-app.tech/changelog",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Sapphire",
+        "url": "https://sapphire-app.tech/changelog"
+      }
+    }
+    </script>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.relative{position:relative}.left-0{left:0px}.right-0{right:0px}.top-0{top:0px}.z-10{z-index:10}.z-50{z-index:50}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mt-0\.5{margin-top:0.125rem}.mb-5{margin-bottom:1.25rem}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-2\.5{height:0.625rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-8{height:2rem}.min-h-screen{min-height:100vh}.w-2\.5{width:0.625rem}.w-\[1px\]{width:1px}.w-auto{width:auto}.w-full{width:100%}.max-w-3xl{max-width:48rem}.max-w-5xl{max-width:64rem}.max-w-7xl{max-width:80rem}.shrink-0{flex-shrink:0}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-10{gap:2.5rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-2\.5{gap:0.625rem}.space-x-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.625rem * var(--tw-space-x-reverse));margin-left:calc(0.625rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-12 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(3rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(3rem * var(--tw-space-y-reverse))}.space-y-16 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(4rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(4rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.space-y-8 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2rem * var(--tw-space-y-reverse))}.whitespace-nowrap{white-space:nowrap}.rounded-full{border-radius:9999px}.rounded-2xl{border-radius:1rem}.border{border-width:1px}.border-t{border-top-width:1px}.border-b{border-bottom-width:1px}.border-\[var\(--color-border-color\)\]{border-color:var(--color-border-color)}.border-\[var\(--color-card-border\)\]{border-color:var(--color-card-border)}.border-cyan-500\/20{border-color:rgb(6 182 212 / 0.2)}.bg-\[var\(--color-background\)\]{background-color:var(--color-background)}.bg-\[var\(--color-border-color\)\]{background-color:var(--color-border-color)}.bg-\[var\(--color-surface\)\]{background-color:var(--color-surface)}.bg-cyan-400{--tw-bg-opacity:1;background-color:rgb(34 211 238 / var(--tw-bg-opacity, 1))}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-cyan-500\/10{background-color:rgb(6 182 212 / 0.1)}.p-12{padding:3rem}.p-4{padding:1rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.\!px-3{padding-left:0.75rem !important;padding-right:0.75rem !important}.\!py-1\.5{padding-top:0.375rem !important;padding-bottom:0.375rem !important}.pb-24{padding-bottom:6rem}.pl-2{padding-left:0.5rem}.pt-36{padding-top:9rem}.pt-5{padding-top:1.25rem}.pt-8{padding-top:2rem}.pb-4{padding-bottom:1rem}.pt-4{padding-top:1rem}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-\[10px\]{font-size:10px}.text-\[16px\]{font-size:16px}.text-base{font-size:1rem;line-height:1.5rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-2xl{font-size:1.5rem;line-height:2rem}.text-\[11px\]{font-size:11px}.text-\[9px\]{font-size:9px}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.tracking-tight{letter-spacing:-0.025em}.tracking-widest{letter-spacing:0.1em}.tracking-wider{letter-spacing:0.05em}.text-\[var\(--color-text-muted\)\]{color:var(--color-text-muted)}.text-\[var\(--color-text-primary\)\]{color:var(--color-text-primary)}.text-\[var\(--color-text-secondary\)\]{color:var(--color-text-secondary)}.text-cyan-300{--tw-text-opacity:1;color:rgb(103 232 249 / var(--tw-text-opacity, 1))}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:text-\[var\(--color-text-primary\)\]:hover{color:var(--color-text-primary)}@media (min-width: 640px){.sm\:block{display:block}.sm\:inline-flex{display:inline-flex}.sm\:flex-row{flex-direction:row}.sm\:items-center{align-items:center}}@media (min-width: 768px){.md\:block{display:block}.md\:inline-flex{display:inline-flex}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}@media (min-width: 1024px){.lg\:flex{display:flex}}</style></head>
+<body class="bg-[var(--color-background)] text-[var(--color-text-primary)] relative min-h-screen">
+    
+    <!-- Custom Floating Cursor -->
+    <div id="custom-cursor"></div>
+    <div id="dark-mode-gradient" style="opacity: 1;"></div>
+    <div id="dot-container">
+        <div id="dot-base" class="bg-dot-pattern"></div>
+        <div id="dot-spotlight"></div>
+    </div>
+
+    <!-- MAIN HEADER NAVBAR -->
+    <div class="fixed top-0 left-0 right-0 z-50 flex justify-center pt-5 px-4 pointer-events-none">
+        <header id="main-header" class="header-glass-capsule flex items-center justify-between gap-4 w-full max-w-5xl mx-auto pointer-events-auto">
+            
+            <!-- Left: Logo & Core Nav -->
+            <div class="flex items-center gap-6">
+                <a href="/" class="flex items-center space-x-2.5 whitespace-nowrap pl-2">
+                    <img id="sapphire-icon" src="../images/sapphire-light.png" alt="Sapphire Logo" class="h-6 w-auto">
+                    <span class="text-base font-extrabold tracking-tight text-[var(--color-text-primary)] hidden sm:block">Sapphire</span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-1">
+                    <a href="../pages/changelog.html" class="header-nav-link is-active">Changelog</a>
+                    <a href="../pages/issues.html" class="header-nav-link">Issues</a>
+                    <a href="../pages/faq.html" class="header-nav-link">FAQ</a>
+                    <a href="../pages/portal.html" class="header-nav-link flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">account_circle</span> Account</a>
+                </nav>
+            </div>
+
+            <!-- Right: Controls & CTAs -->
+            <div class="flex items-center gap-3">
+                <!-- Theme Switcher: Colorful, Dark, Light -->
+                <div id="theme-switcher" class="theme-switcher-container hidden md:inline-flex">
+                    <input type="radio" id="theme-radio-colorful" name="theme" value="colorful" class="switch-radio">
+                    <label for="theme-radio-colorful" class="switch-label" title="Colorful"><span class="material-symbols-outlined">palette</span></label>
+                    <input type="radio" id="theme-radio-dark" name="theme" value="dark" class="switch-radio" checked>
+                    <label for="theme-radio-dark" class="switch-label" title="Dark Mode"><span class="material-symbols-outlined">dark_mode</span></label>
+                    <input type="radio" id="theme-radio-light" name="theme" value="light" class="switch-radio">
+                    <label for="theme-radio-light" class="switch-label" title="Light Mode"><span class="material-symbols-outlined">light_mode</span></label>
+                    <div class="switch-puck"></div>
+                </div>
+
+                <div class="h-5 w-[1px] bg-[var(--color-border-color)] hidden md:block mx-1"></div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2">
+                    <a href="../pages/subscribe.html" class="header-btn header-btn-subscribe">
+                        <span class="material-symbols-outlined text-[16px]">workspace_premium</span> Subscribe
+                    </a>
+                    <a href="https://github.com/cshariq/Sapphire/releases/latest/download/Sapphire.pkg" class="header-btn header-btn-download hidden sm:inline-flex">
+                        <span class="material-symbols-outlined text-[16px]">download</span> Download
+                    </a>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <!-- MAIN CHANGELOG CONTAINER -->
+    <div class="relative z-10 w-full min-h-screen pt-36 pb-24 px-6 max-w-5xl mx-auto">
+        <main class="page-content space-y-16">
+            
+            <!-- Page Header -->
+            <div class="text-center max-w-3xl mx-auto space-y-4">
+                <h1 class="apple-headline text-gradient-apple">Release Changelog</h1>
+                <p class="apple-subheadline">
+                    Discover new features, performance refinements, and software updates for Sapphire on macOS.
+                </p>
+            </div>
+
+            <div id="changelog-container" class="space-y-12">
+                
+                <!-- 1. Latest Stable Release Section -->
+                <div>
+                    <div class="flex items-center gap-2 mb-6 px-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <h2 class="text-xs font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)]">Latest Stable Release</h2>
+                    </div>
+                    
+                    <div id="latest-release">
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">3.0</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">September 15, 2026</span>
+                            </div>
+                            <div class="release-body"><h1>NOTE: This is an early release and may have several bugs</h1>
+<p>Bug Fixes:</p>
+<ul>
+<li>Fixed an issue where the weather persistent live activity wouldn't show</li>
+<li>Fixed an issue where ghost windows would show on mac os 27</li>
+<li>Fixed an issue regarding settings import</li>
+<li>Fixed an issue where automation permission would never show as accepted</li>
+<li>Fixed an issue where app list wouldn't load</li>
+<li>Fixed an issue where safari wouldn't show in the app list</li>
+<li>Fixed an issue regarding size of certain live activities</li>
+<li>Fixed an issue regarding snap zones behaviour on multiple displays</li>
+<li>Fixed an issue where media widget wouldn't hide although there's no music playing</li>
+<li>Fixed an issue where notch could duplicate</li>
+<li>Many other bug fixes</li>
+</ul>
+<p>Improvements:</p>
+<ul>
+<li>Improved multi monitor experience</li>
+<li>Improved app performance (app now idles at 0% cpu usage)</li>
+<li>Improved settings menu experience with categories</li>
+<li>Improved Pill HUD</li>
+<li>Added an option to hide airdrop within the file drop popup</li>
+<li>You can now see all keyboard shortcuts in a dedicated menu</li>
+<li>Added information on for which feature each permission is required</li>
+<li>Improved performance of hover detection</li>
+<li>Improved detection of snap zone drags</li>
+<li>Improved detection of file drags</li>
+<li>You can now adjust audio settings within the app</li>
+<li>You can now turn off auto update</li>
+<li>You can now turn off update live activity</li>
+<li>Other performance improvements</li>
+</ul>
+<p>New features:</p>
+<ul>
+<li>Replaced liquid glass intensity with liquid glass style</li>
+<li>Added menu bar profiles (requires subscription)</li>
+<li>Added an option to have pill HUD on top</li>
+<li>You can now configure the location you want face ID to be enabled in</li>
+<li>Added tidal API (beta)</li>
+<li>Added an option to add lyrics delay</li>
+<li>Added a timer widget</li>
+</ul>
+<p>Audio:</p>
+<ul>
+<li>Introduces 8D audio (requires subscription)</li>
+<li>Introduces surround sound (requires subscription)</li>
+<li>You can now change the eq bands, up to 31 bands</li>
+</ul>
+<p>Clipboard (new features requires subscription)</p>
+<ul>
+<li>Introduces clipboard quick picker</li>
+<li>Introduces auto-clear clipboard</li>
+<li>Introduces finder cut &amp; paste</li>
+<li>Introduces text snippets</li>
+</ul>
+<p>System enhancements:</p>
+<ul>
+<li>Introduces app switcher; you can replace the native cmd + tab menu (requires subscription)</li>
+<li>You can now quit an app when its last window has been closed</li>
+<li>You can now add a close app and window shortcut protection</li>
+<li>You can now change the green expand button to expand the app in the current space rather than bringing it to fullscreen</li>
+</ul>
+<p>Snap Zones:</p>
+<ul>
+<li>Introduces snap zones shortcuts; use a shortcut to bring the desired window to the desired portion of the screen</li>
+<li>Introduces a new smooth resize option</li>
+</ul>
+<p>Dock:</p>
+<ul>
+<li>Introduces dock layouts; change to a desired dock layout and setting through a hotkey (requires subscription)</li>
+<li>Introduces dock previews; preview any dock element by hovering over its app icon for bit (requires subscription)</li>
+<li>Introduces dock behaviours; adjust whether you want dock settings to be display specific and also configure the dock to only show running apps</li>
+<li>Customize what clicking the app icon for a dock app does</li>
+</ul>
+<p>Media optimizer:</p>
+<ul>
+<li>Automatically optimize the size of images on your clipboard (requires subscription)</li>
+<li>Show file optimizer options within settings</li>
+<li>Copy on screen text using a single shortcut (requires subscription)</li>
+</ul>
+<p>Mouse:</p>
+<ul>
+<li>You can now invert your mouse's vertical and horizontal scroll direction</li>
+<li>You can now disable pointer acceleration</li>
+<li>You can now configure specific mouse buttons</li>
+<li>Added an option to focus the app where the cursor lies</li>
+<li>Other mouse settings</li>
+</ul>
+<p>Monitoring:</p>
+<ul>
+<li>Added an option to show system stats in menubar (requires subscription)</li>
+</ul>
+<p>Developers:</p>
+<ul>
+<li>Added an option to show status of terminal, ai agents, builds, etc</li>
+<li>Added an option to put device on caffeinate while dev activities mentioned above are running</li>
+</ul>
+<p>Emojis:</p>
+<ul>
+<li>Added an emoji picker</li>
+<li>Added an option to suggest emojis as you type (requires subscription)</li>
+</ul>
+<p>Archive &amp; DMG:</p>
+<ul>
+<li>Sapphire can now open archives of all types, detailed progress is shown in the notch or popup depending on user configuration</li>
+<li>Sapphire can now open DMG files, place the app in the Application folder and automatically delete the DMG file (requires subscription)</li>
+</ul>
+<p>Apps:</p>
+<ul>
+<li>You can now scan for updates across your applications</li>
+<li>You can now cleanly uninstall apps. Sapphire deletes the application and all files related to it</li>
+</ul>
+<p>Storage (requires subscription):</p>
+<ul>
+<li>Scan your entire disk, remove caches, large files, etc</li>
+</ul>
+<p>Android Continuity (requires subscription):</p>
+<ul>
+<li>Sync clipboard between your devices (does not require subscription)</li>
+<li>Show phone notifications</li>
+<li>Show phone live activities</li>
+<li>Show media controls</li>
+<li>Handoff apps and websites between your devices</li>
+<li>Sync notification mode/dnd (does not require subscription)</li>
+<li>Transfer files between your devices (does not require subscription)</li>
+<li>View phone files in finder</li>
+<li>Copy new photos to mac automatically</li>
+<li>Mirror your mac's screen</li>
+<li>Extend your mac's screen</li>
+<li>Use your mac's keyboard and mouse on your android device</li>
+<li>Remotely access and control your mac from your phone</li>
+<li>Continuity camera</li>
+<li>Continuity microphone</li>
+<li>Scan documents for your mac with your phone</li>
+<li>Play phone audio to mac (does not require subscription)</li>
+<li>Automatically switch earbuds between your devices</li>
+<li>Mirror your phone on your mac</li>
+<li>Instant hotspot</li>
+<li>Sync focus session and blocked apps between your devices</li>
+</ul>
+<p>iPhone Continuity:</p>
+<ul>
+<li>Transfer files between your devices </li>
+<li>Sync focus session and blocked apps between your devices (requires subscription)</li>
+</ul>
+<p>Known issues:</p>
+<ul>
+<li>Issues regarding apple music remain</li>
+<li>Liquid glass can be buggy</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/v3.0/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(146.61 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/v3.0/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(146.64 MB)</span>
+                        </a></div>
+                        </div></div>
+                </div>
+
+                <!-- 2. Beta Preview Channel Section (Appears 2nd on the list if available) -->
+                <div id="beta-release-container" class="space-y-6">
+                    <div class="flex items-center justify-between gap-2 px-2 flex-wrap">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                            <h2 class="text-xs font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)]">Beta Preview Channel</h2>
+                        </div>
+                        <span class="tier-pill-basic text-[10px]"><span class="material-symbols-outlined text-xs">workspace_premium</span> Basic, Pro &amp; Ultra Exclusive</span>
+                    </div>
+
+                    <div id="beta-release">
+                        <div class="release-item space-y-4 is-beta-item">
+                            
+                        <div class="bg-cyan-500/10 border border-cyan-500/20 rounded-2xl p-4 mb-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-2.5 text-xs text-cyan-300 font-semibold">
+                                <span class="material-symbols-outlined text-base">lock_open</span>
+                                <span>Beta builds are available exclusively to Basic, Pro &amp; Ultra subscribers</span>
+                            </div>
+                            <a href="../pages/subscribe.html" class="apple-cta-btn !py-1.5 !px-3 text-[11px] font-bold uppercase tracking-wider shrink-0">
+                                Upgrade Plan
+                            </a>
+                        </div>
+                    
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.8</h2>
+                                    <span class="tier-pill-basic text-[9px]">Beta Build</span>
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 31, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Improved experience on external monitors</li>
+<li>Fixed issues regarding apple music</li>
+<li>Several efficiency improvements</li>
+<li>Added a new focus session feature</li>
+<li>Added a new app lock feature for pro and ultra users</li>
+<li>Added a feature where you can change your lockscreen wallpaper</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.8-Beta/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(128.79 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.8-Beta/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(128.81 MB)</span>
+                        </a></div>
+                        </div></div>
+                </div>
+
+                <!-- 3. Previous Releases Section -->
+                <div id="previous-releases" class="space-y-8 pt-8 border-t border-[var(--color-card-border)]">
+                    <div class="px-2">
+                        <h2 class="text-xl font-extrabold text-[var(--color-text-primary)] tracking-tight">Previous Versions</h2>
+                        <p class="text-xs text-[var(--color-text-secondary)] mt-0.5">Archive of historical builds and patch releases.</p>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.8</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">September 1, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Fixed issues regarding notch duplication</li>
+<li>Fixed an issue where the notch would be mirrored on external displays</li>
+<li>Fixed an issue with notch corner radius on external displays</li>
+<li>Fixed an issue with the display settings </li>
+<li>Fixed an issue where snap zone or file drag view would be pinned when pin was enabled</li>
+<li>Fixed an issue with updates</li>
+<li>Added an option for tidal and yt music as music source</li>
+<li>Added a new shopify widget (beta)</li>
+<li>Fixed an issue </li>
+<li>Fixed issue regarding notch padding</li>
+<li>Made notch size settings more accessible</li>
+<li>New pill HUD</li>
+<li>New dot HUD</li>
+<li>Reorganized appearance settings</li>
+<li>Added a new fade out appearance setting</li>
+<li>Fixed issues with apple music</li>
+<li>Spotify users can now see upcoming song 10sec before it plays in the music live activity</li>
+<li>App performance is significantly improved</li>
+<li>Added an option to set a unique lock screen wallpaper</li>
+<li>Added new focus feature</li>
+<li>Added new app block feature for subscribers</li>
+<li>Many other improvements</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.8/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(128.98 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.8/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(129 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.73</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 24, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Reverted changes regarding notch size</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.73/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(127.07 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.73/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(127.08 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.72</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 24, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Fixed minor issues regarding Spotify</li>
+<li>Redesigned up next element for Spotify users</li>
+<li>Redesigned play count element for Spotify users</li>
+<li>Made installing the helper during onboarding more seamless</li>
+<li>Added a skip option in the helper section during onboarding</li>
+<li>Improved app launch performance</li>
+<li>Added an option for on hover open delay</li>
+<li>Added an option to customize swipe actions</li>
+<li>Improved liquid glass</li>
+<li>Fixed an issue where users were getting logged out</li>
+<li>Fixed an issue where hover to open wouldn't allow interaction with live activity buttons</li>
+<li>Fixed an issue where the main app would start before onboarding was complete</li>
+<li>Fixed an issue where the app would ask for permission on launch although they were revoked</li>
+<li>Fixed an issue where the app would ask permissions before onboarding was even started</li>
+<li>Fixed issues with battery management</li>
+<li>Fixed issues with the lock screen</li>
+<li>Fixed issues with the bluetooth sound occurring although the setting is off</li>
+<li>Fixed an issue where priority support tickets could not be submitted in the app</li>
+<li>Checkout now redirects to the website</li>
+<li>Fixed an issue where setting the first day of the month to monday would have no affect on the month view</li>
+<li>Fixed an issue where sapphire would prevent display inactivity setting from triggering</li>
+<li>Fixed an issue where full screen wouldn't be detected when using a monitor</li>
+<li>Fixed an issue regarding updates</li>
+<li>Fixed a ton of crash related issues</li>
+<li>Several other bug fixes</li>
+</ul>
+<p>Face ID:</p>
+<ul>
+<li>Uses a significantly better model, should be able to differentiate between siblings and look alike's</li>
+<li>New registration method for greater accuracy</li>
+<li>Internal changes improving accuracy</li>
+<li>Face ID should now be on par to Samsung's class 2 facial recognition in terms of accuracy</li>
+<li>Added a proprietary state of the art spoof model to detect impersonation</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.72/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(127.07 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.72/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(127.09 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4 is-beta-item">
+                            
+                        <div class="bg-cyan-500/10 border border-cyan-500/20 rounded-2xl p-4 mb-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-2.5 text-xs text-cyan-300 font-semibold">
+                                <span class="material-symbols-outlined text-base">lock_open</span>
+                                <span>Beta builds are available exclusively to Basic, Pro &amp; Ultra subscribers</span>
+                            </div>
+                            <a href="../pages/subscribe.html" class="apple-cta-btn !py-1.5 !px-3 text-[11px] font-bold uppercase tracking-wider shrink-0">
+                                Upgrade Plan
+                            </a>
+                        </div>
+                    
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.68</h2>
+                                    <span class="tier-pill-basic text-[9px]">Beta Build</span>
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 19, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Fixed minor issues regarding spotify</li>
+<li>Redesigned up next element</li>
+<li>Redesigned play count element</li>
+<li>Made installing the helper during onboarding more seamless</li>
+<li>Fixed an issue where </li>
+<li>Fixed an issue where the main app would start before onboarding was complete</li>
+<li>Fixed an issue where the app would ask for permission on launch although they were revoked</li>
+<li>Fixed an issue where the app would ask permissions before onboarding was even started</li>
+<li>Fixed issues with battery management</li>
+<li>Fixed issues with the lock screen</li>
+<li>Fixed issues with the bluetooth sound occurring although the setting is off</li>
+<li>Fixed a ton of crash related issues</li>
+</ul>
+<p>Face ID:</p>
+<ul>
+<li>Uses a significantly better model, should be able to differentiate between siblings and look alike's</li>
+<li>New registration method for greater accuracy</li>
+<li>Internal changes improving accuracy</li>
+<li>Face ID should now be on par to Samsung's class 2 facial recognition in terms of accuracy</li>
+<li>Uses a proprietary state of the art spoof model to detect impersonation</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.68/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(126.52 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.68/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(126.54 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.61</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 17, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Major improvements to spotify</li>
+<li>Major improvements to apple music</li>
+<li>New UI for spotify users</li>
+<li>New media switcher</li>
+<li>Added an option to select the apps visible in media player</li>
+<li>Added a caffeinate timeout setting</li>
+<li>Added an option to remove file from file shelf once dragged out</li>
+<li>Added a setting to disable notch expansion when the device is locked</li>
+<li>Added an option to swipe up to hide the notch</li>
+<li>Added release notes in settings</li>
+<li>Improved the performance of the HUD</li>
+<li>Improved skip ad functionality for spotify users</li>
+<li>Improved performance of app when unlocking</li>
+<li>Improved animations</li>
+<li>Fixed an issue with fans not being detected on the device</li>
+<li>Fixed an issue with the helper</li>
+<li>Fixed an issue where the caffeinate feature would turn off when the power state of the device changes</li>
+<li>Fixed an issue with sapphire not being shown in app background activity</li>
+<li>Fixed an issue where the app may crash when unlocking with face id enabled</li>
+<li>Fixed an issue with the battery limit not working while the device is in sleep</li>
+<li>Fixed press and hold media button functionality</li>
+<li>Fixed an issue with the mirror widget</li>
+<li>Fixed random log outs</li>
+<li>Several other bug fixes</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.61/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(39.35 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.61/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(39.36 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.58</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 14, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Fixed an issue with the helper tool</li>
+<li>Major improvements to blip</li>
+<li>Improved bluetooth live activity</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.58/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(37.12 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.58/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(37.13 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.57</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 13, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Fixed an issue with helper permission during onboarding</li>
+<li>Fixed an issue with the weather widget</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.57/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.88 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.57/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.9 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.56</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 13, 2026</span>
+                            </div>
+                            <div class="release-body"><p>Fixes an issue with the helper</p>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.56/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.87 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.56/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.88 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.55</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 13, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Fixed a bug where certain buttons can't be clicked while the notch is expanded</li>
+<li>Fixed a bug where the mirror widget may require an app restart to work</li>
+<li>Fixed a bug where on extended screens the position of the notch is calculated using the macbook screen rather than the monitor's</li>
+<li>Fixed an issue where the setting to show the notch on a specific display would not work</li>
+<li>Fixed an issue where certain portions of the app would get clipped on the 14in macbook pro and the 13in macbook air</li>
+<li>Fixed an issue with the calendar widget showing the incorrect date</li>
+<li>Fixed an issue with gemini live not working</li>
+<li>Fixed an issue with apple music play/pause</li>
+<li>Fixed an issue where the setting window may be too large on certain devices</li>
+<li>Added circle to search (beta) for subscribers</li>
+<li>Improved blip functionality for subscribers</li>
+<li>Improved sports widget for subscribers</li>
+<li>Added an option to only show finance live activity during active market hours for subscribers</li>
+<li>Added an option to only show sports live activity during a live game for subscribers</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.55/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.87 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.55/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.88 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.54</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 12, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Fixed an issue where apple mail opening unexpectedly</li>
+<li>Fixed an issue with the notch duplicating</li>
+<li>Fixed an issue where the notch wouldn't minimize responsively</li>
+<li>Fixed an issue with the notch becoming off centred</li>
+<li>Fixed an issue with file drop view not highlighting the hovered area</li>
+<li>Fixed an issue where blip would crash</li>
+<li>Fixed minor app vulnerabilities</li>
+<li>Fixed an issue with the notch size of the 13in macbook air</li>
+<li>Fixed issue where clipboard items couldn't be copied</li>
+<li>Fixed an issue where some settings wouldn't save across app launches</li>
+<li>Fixed an issue where users couldn't interact with the background app while the notch was pinned</li>
+<li>Fixed an issue where the notch bar items would duplicate when reordered</li>
+<li>Fixed an issue where battery limit wouldn't work due to the helper being inactive</li>
+<li>Fixed an issue where battery configuration wouldn't save</li>
+<li>Fixed an issue where the app wouldn't check for updates periodically</li>
+<li>Fixed an issue where the file shelf live activity wouldn't hide or show immediately</li>
+<li>Fixed an issue where the onboarding menu would exceed the screen size on the 13in macbook air</li>
+<li>Fixed an issue where the weather live activity</li>
+<li>Fixed an issue where only admin passwords would be accepted for face id, rather than the user's actual password</li>
+<li>Removed redundant gemini notch bar item</li>
+<li>Clipboard and Notes item only show the created time in minutes</li>
+<li>Added the mirror widget</li>
+<li>Added liquid glass to the notch</li>
+<li>Added an option to change weather info to metric units</li>
+</ul>
+<p>To update you can go Settings --&gt; About.</p>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.54/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.29 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.54/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.3 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.53</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 11, 2026</span>
+                            </div>
+                            <div class="release-body"><p>Fixed an issue where diagnostic files would be unexpectedly saved</p>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.53/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.03 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.53/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.05 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.52</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 11, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Fixed an issue where volume HUD would lag</li>
+<li>Fixed an issue where the system HUD wouldn't appear even though volume and/or brightness hud was disabled</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.52/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.06 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.52/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.07 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.51</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 10, 2026</span>
+                            </div>
+                            <div class="release-body"><p>Fixed an issue where the app would crash when the device was locked</p>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.51/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.06 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.51/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.07 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.5</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">August 10, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Rolled back new spotify features for stability</li>
+<li>Fixed the issue where the weather wouldn't be shown for the majority of users</li>
+<li>Fixed an issue where the app would lag</li>
+<li>Fixed increased ram usage even after settings app was closed</li>
+<li>Fixed an issue where the shortcuts widget wouldn't be shown</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.5/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.06 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.5/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(36.07 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.3</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">July 9, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>Fixed issues with caffeinate features</li>
+<li>Added cursor horizontal lock feature</li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.3/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(33.6 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.3/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(33.62 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.2</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">July 7, 2026</span>
+                            </div>
+                            <div class="release-body"></div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.2/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(33.57 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.2/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(33.59 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.1</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">June 17, 2026</span>
+                            </div>
+                            <div class="release-body"><ul>
+<li>More effeceint media/now playing pipeline</li>
+<li>Faster and more accurate face id logic and models</li>
+<li>Fixed an issue where the weather info would be unavailable
+<strong>Full Changelog</strong>: <a href="https://github.com/cshariq/Sapphire/commits/Latest">https://github.com/cshariq/Sapphire/commits/Latest</a></li>
+</ul>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.1/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(33.58 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.1/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(33.61 MB)</span>
+                        </a></div>
+                        </div>
+                        <div class="release-item space-y-4">
+                            
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--color-card-border)]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 class="text-2xl font-extrabold text-[var(--color-text-primary)] tracking-tight">2.0</h2>
+                                    
+                                </div>
+                                <span class="text-xs font-mono text-[var(--color-text-secondary)]">June 14, 2026</span>
+                            </div>
+                            <div class="release-body"><p>Major Updates and Improvements
+Improvements:</p>
+<ul>
+<li>Caffeinate feature is now more reliable and can use lid angle to turn off screen when in clamshell mode</li>
+<li>Now playing is no longer dependent on MediaRemoteAdapter swift package</li>
+<li>CPU usage reduced by up to 10% when media is playing</li>
+<li>Volume HUD can now show and allow you to change app volume</li>
+<li>Improved face id with a lighter more accurate model</li>
+<li>Face id now works faster</li>
+<li>Improved snap zones</li>
+<li>Improved file shelf</li>
+<li>Lower CPU usage when live activities are switching</li>
+<li>Lower idle CPU usage</li>
+<li>Added snapping to calendar widget</li>
+<li>Fan settings reset on app close</li>
+<li>Ram management improvements</li>
+<li>CPU usage improvements</li>
+</ul>
+<p>New Features:</p>
+<ul>
+<li>Redesigned multi audio menu in notch</li>
+<li>Added app mixer to multi audio</li>
+<li>Added individual app EQs</li>
+<li>Added individual audio device EQs</li>
+<li>Added functioning EQ Presets</li>
+<li>Added multi-device output functionality</li>
+<li>Added audio device balance, delay, and volume refinement</li>
+<li>Added new microphone live activity</li>
+<li>Added universal "hardware" mute for microphone</li>
+<li>Added menu bar customization (beta)</li>
+<li>Added support for sapphire account, subscription and license keys</li>
+<li>Settings can now be exported, imported and reset</li>
+<li>Added support for beta releases (requires subscription)</li>
+<li>Added new device agent (requires subscription)</li>
+<li>Added new sports widget (requires subscription)</li>
+<li>Added new finance widget (requires subscription)</li>
+<li>Added new sports live activity (requires subscription)</li>
+<li>Added new finance live activity (requires subscription)</li>
+</ul>
+<p>Other features and improvements</p>
+<p>It is recommended to install Sapphire.pkg.</p>
+</div>
+                            <div class="flex gap-3 pt-4 flex-wrap border-t border-[var(--color-card-border)]">
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.0/Sapphire.pkg" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.pkg</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(33.24 MB)</span>
+                        </a>
+                        <a href="https://github.com/cshariq/Sapphire/releases/download/2.0/Sapphire.zip" class="asset-link">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span>Sapphire.zip</span>
+                            <span class="text-[var(--color-text-secondary)] text-[10px]">(33.27 MB)</span>
+                        </a></div>
+                        </div></div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="main-footer border-t border-[var(--color-border-color)] bg-[var(--color-surface)] relative z-10">
+        <div class="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div class="space-y-4">
+                <div class="flex items-center space-x-3">
+                    <img id="footer-logo" src="../images/sapphire-light.png" alt="Sapphire Logo" class="h-8 w-auto">
+                    <span class="text-xl font-extrabold tracking-tight">Sapphire</span>
+                </div>
+                <p class="text-xs text-[var(--color-text-secondary)] leading-relaxed">
+                    The Notch, Reimagined. 
+<br> An all-in one utillity app for mac os.
+                </p>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-[var(--color-text-primary)] mb-4">Product</h4>
+                <ul class="space-y-2 text-xs text-[var(--color-text-secondary)]">
+                    <li><a href="../pages/subscribe.html" class="hover:text-[var(--color-text-primary)] transition-colors">Subscription Plans</a></li>
+                    <li><a href="../pages/portal.html" class="hover:text-[var(--color-text-primary)] transition-colors">Manage License &amp; Portal</a></li>
+                    <li><a href="../pages/changelog.html" class="hover:text-[var(--color-text-primary)] transition-colors">Release Changelog</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-[var(--color-text-primary)] mb-4">Support &amp; Community</h4>
+                <ul class="space-y-2 text-xs text-[var(--color-text-secondary)]">
+                    <li><a href="../pages/faq.html" class="hover:text-[var(--color-text-primary)] transition-colors">Frequently Asked Questions</a></li>
+                    <li><a href="../pages/issues.html" class="hover:text-[var(--color-text-primary)] transition-colors">Issue Tracker</a></li>
+                    <li><a href="https://discord.gg/Ryuea8vM2h" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--color-text-primary)] transition-colors">Discord Server</a></li>
+                    <li><a href="../pages/mailto:shariq.charolia@gmail.com.html" class="hover:text-[var(--color-text-primary)] transition-colors">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-[var(--color-text-primary)] mb-4">Resources</h4>
+                <ul class="space-y-2 text-xs text-[var(--color-text-secondary)]">
+                    <li><a href="https://github.com/cshariq/Sapphire" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--color-text-primary)] transition-colors">GitHub Repository</a></li>
+                    <li><a href="../pages/privacy.html" class="hover:text-[var(--color-text-primary)] transition-colors"></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="py-6 border-t border-[var(--color-border-color)] text-center text-xs text-[var(--color-text-muted)]">
+            <p>© 2026 Shariq Charolia. All rights reserved. Sapphire for macOS.</p>
+        </div>
+    </footer>
+
+    <script src="../scripts/script.js"></script>
+
+</body></html>

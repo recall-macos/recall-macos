@@ -1,12 +1,522 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Recall — macOS Clipboard Manager</title>
+<html lang="en" class="theme-dark"><head><style>body {transition: opacity ease-in 0.2s; }
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; }
+</style>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recall - Your Clipboard, Always Within Reach</title>
+    <meta name="description" content="Recall is a native macOS clipboard manager. Press a shortcut, search your history, paste — and it's gone.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Recall">
+    <meta property="og:title" content="Recall - Your Clipboard, Always Within Reach">
+    <meta property="og:description" content="Recall is a native macOS clipboard manager. Press a shortcut, search your history, paste — and it's gone.">
+    <meta property="og:url" content="https://recall-macos.github.io/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Recall - Your Clipboard, Always Within Reach">
+    <meta name="twitter:description" content="Recall is a native macOS clipboard manager. Press a shortcut, search your history, paste — and it's gone.">
+    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+    <link rel="stylesheet" href="./styles/css2.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./scripts/gsap.min.js"></script>
+    <script src="./scripts/ScrollTrigger.min.js"></script>
+    <script src="./scripts/lenis.min.js"></script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Recall",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "macOS",
+      "description": "Native macOS clipboard manager. Press a shortcut, search your history, paste — and it's gone.",
+      "url": "https://recall-macos.github.io",
+      "downloadUrl": "https://github.com/recall-macos/recall-macos/releases/latest",
+      "softwareVersion": "1.0.0",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Neel Verma"
+      }
+    }
+    </script>
 </head>
-<body>
-<h1>Recall</h1>
-<p>A beautiful, native macOS clipboard manager.</p>
-<a href="https://github.com/recall-macos/recall-macos">View on GitHub</a>
-</body>
-</html>
+<body class="bg-[var(--color-background)] text-[var(--color-text-primary)] relative selection:bg-blue-500/30">
+
+    <!-- Custom Floating Cursor -->
+    <div id="custom-cursor"></div>
+
+    <!-- Dynamic Spotlight Dot Matrix -->
+    <div id="dark-mode-gradient" style="opacity: 1;"></div>
+    <div id="dot-container" style="opacity: 0;">
+        <div id="dot-base" class="bg-dot-pattern"></div>
+        <div id="dot-spotlight"></div>
+    </div>
+
+    <!-- MAIN HEADER NAVBAR -->
+    <div class="fixed top-0 left-0 right-0 z-50 flex justify-center pt-5 px-4 pointer-events-none">
+        <header id="main-header" class="header-glass-capsule flex items-center justify-between gap-4 w-full max-w-5xl mx-auto pointer-events-auto" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;max-width:64rem;margin-left:auto;margin-right:auto;">
+
+            <!-- Left: Logo & Core Nav -->
+            <div class="flex items-center gap-6">
+                <a href="/" class="flex items-center space-x-2.5 whitespace-nowrap pl-2">
+                    <img id="recall-icon" src="./images/recall-icon.png" alt="Recall Logo" style="height:24px;width:24px;object-fit:contain;border-radius:6px;flex-shrink:0;">
+                    <span class="text-base font-extrabold tracking-tight text-[var(--color-text-primary)] hidden sm:block">Recall</span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-1">
+                    <a href="./pages/changelog.html" class="header-nav-link">Changelog</a>
+                    <a href="./pages/faq.html" class="header-nav-link">FAQ</a>
+                    <a href="./pages/privacy.html" class="header-nav-link">Privacy</a>
+                </nav>
+            </div>
+
+            <!-- Right: Controls & CTAs -->
+            <div class="flex items-center gap-3">
+                <!-- Theme Switcher -->
+                <div id="theme-switcher" class="theme-switcher-container hidden md:inline-flex">
+                    <input type="radio" id="theme-radio-colorful" name="theme" value="colorful" class="switch-radio">
+                    <label for="theme-radio-colorful" class="switch-label" title="Colorful"><span class="material-symbols-outlined">palette</span></label>
+                    <input type="radio" id="theme-radio-dark" name="theme" value="dark" class="switch-radio" checked>
+                    <label for="theme-radio-dark" class="switch-label" title="Dark Mode"><span class="material-symbols-outlined">dark_mode</span></label>
+                    <input type="radio" id="theme-radio-light" name="theme" value="light" class="switch-radio">
+                    <label for="theme-radio-light" class="switch-label" title="Light Mode"><span class="material-symbols-outlined">light_mode</span></label>
+                    <div class="switch-puck"></div>
+                </div>
+
+                <div class="h-5 w-[1px] bg-[var(--color-border-color)] hidden md:block mx-1"></div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2">
+                    <a href="https://github.com/recall-macos/recall-macos/releases/latest/download/Recall.dmg" class="header-btn header-btn-download hidden sm:inline-flex">
+                        <span class="material-symbols-outlined text-[16px]">download</span> Download
+                    </a>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <!-- MAIN SCROLL CINEMA -->
+    <main class="relative z-10">
+
+        <!-- HERO INTRO -->
+        <section id="hero-section" class="min-h-screen relative flex flex-col items-center justify-center pt-40 pb-24 px-6 max-w-7xl mx-auto">
+            <div class="text-center max-w-4xl mx-auto space-y-6">
+
+                <h1 class="hero-title apple-headline tracking-tighter text-gradient-apple" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+                    Your Clipboard,<br>Always Within Reach.
+                </h1>
+
+                <p class="apple-scrub-text apple-subheadline max-w-2xl mx-auto text-[var(--color-text-secondary)]"><span class="apple-word" style="opacity: 1;">Recall</span> <span class="apple-word" style="opacity: 1;">runs</span> <span class="apple-word" style="opacity: 1;">silently</span> <span class="apple-word" style="opacity: 1;">in</span> <span class="apple-word" style="opacity: 1;">your</span> <span class="apple-word" style="opacity: 1;">menu</span> <span class="apple-word" style="opacity: 1;">bar</span> <span class="apple-word" style="opacity: 1;">and</span> <span class="apple-word" style="opacity: 1;">captures</span> <span class="apple-word" style="opacity: 1;">everything</span> <span class="apple-word" style="opacity: 1;">you</span> <span class="apple-word" style="opacity: 1;">copy.</span> <span class="apple-word" style="opacity: 1;">Hit</span> <span class="apple-word" style="opacity: 1;">the</span> <span class="apple-word" style="opacity: 1;">shortcut</span> <span class="apple-word" style="opacity: 1;">from</span> <span class="apple-word" style="opacity: 1;">anywhere,</span> <span class="apple-word" style="opacity: 1;">search</span> <span class="apple-word" style="opacity: 1;">instantly,</span> <span class="apple-word" style="opacity: 1;">and</span> <span class="apple-word" style="opacity: 1;">paste</span> <span class="apple-word" style="opacity: 1;">back</span> <span class="apple-word" style="opacity: 1;">into</span> <span class="apple-word" style="opacity: 1;">whatever</span> <span class="apple-word" style="opacity: 1;">you</span> <span class="apple-word" style="opacity: 1;">were</span> <span class="apple-word" style="opacity: 1;">doing.</span></p>
+
+                <!-- Hero CTAs -->
+                <div class="hero-cta flex flex-wrap items-center justify-center gap-4 pt-4" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+                    <a href="https://github.com/recall-macos/recall-macos/releases/latest/download/Recall.dmg" class="apple-cta-btn w-full sm:w-auto">
+                        <span class="material-symbols-outlined">download</span> Download for macOS
+                    </a>
+                    <a href="https://github.com/recall-macos/recall-macos" target="_blank" rel="noopener noreferrer" class="apple-secondary-btn w-full sm:w-auto">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" /></svg>
+                        View on GitHub
+                    </a>
+                </div>
+
+                <!-- Stats -->
+                <div id="hero-stats" class="items-center justify-center gap-6 pt-2 text-xs font-semibold text-[var(--color-text-secondary)] flex">
+                    <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-amber-400 text-sm">star</span> Open Source</span>
+                    <span class="w-1 h-1 rounded-full bg-[var(--color-border-color)]"></span>
+                    <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-blue-400 text-sm">lock</span> 100% Local — No Cloud</span>
+                    <span class="w-1 h-1 rounded-full bg-[var(--color-border-color)]"></span>
+                    <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-emerald-400 text-sm">check_circle</span> Free Forever</span>
+                </div>
+            </div>
+
+            <div class="hero-video-frame mt-16 w-full max-w-5xl rounded-3xl p-3 bg-[var(--color-secondary)] border border-[var(--color-card-border)] shadow-2xl gpu-layer" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+                <div class="relative rounded-2xl overflow-hidden bg-black aspect-video border border-white/5 flex items-center justify-center">
+                    <!-- Replace with actual Recall demo video -->
+                    <div class="flex flex-col items-center justify-center gap-4 text-white/30 py-24">
+                        <span class="material-symbols-outlined text-6xl">play_circle</span>
+                        <span class="text-sm font-medium">Demo video coming soon</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 1. INSTANT SEARCH — PURE TEXT HORIZONTAL RUNWAY -->
+        <section id="feature-search" class="force-dark relative w-full min-h-[550vh] bg-black">
+            <div class="blip-sticky-stage h-screen w-full flex flex-col items-center justify-center overflow-hidden px-6">
+
+                <!-- Stage A: TEXT RUNWAY -->
+                <div class="blip-runway-viewport">
+                    <div class="blip-bg-shapes-layer">
+                        <div class="bg-geo-shape bg-shape-square left-[15%] top-[20%]">
+                            <svg width="110" height="110" viewBox="0 0 100 100" fill="none"><rect x="5" y="5" width="90" height="90" rx="18" stroke="rgba(192, 132, 252, 0.4)" stroke-width="2.5" fill="rgba(192, 132, 252, 0.04)" /></svg>
+                        </div>
+                        <div class="bg-geo-shape bg-shape-triangle left-[45%] top-[60%]">
+                            <svg width="120" height="110" viewBox="0 0 100 90" fill="none"><polygon points="50,5 95,85 5,85" stroke="rgba(56, 189, 248, 0.4)" stroke-width="2.5" fill="rgba(56, 189, 248, 0.04)" /></svg>
+                        </div>
+                        <div class="bg-geo-shape bg-shape-circle left-[75%] top-[25%]">
+                            <svg width="110" height="110" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="42" stroke="rgba(244, 114, 182, 0.4)" stroke-width="2.5" fill="rgba(244, 114, 182, 0.04)" /></svg>
+                        </div>
+                        <div class="bg-geo-shape bg-shape-diamond left-[88%] top-[65%]">
+                            <svg width="100" height="100" viewBox="0 0 100 100" fill="none"><polygon points="50,5 95,50 50,95 5,50" stroke="rgba(74, 222, 128, 0.4)" stroke-width="2.5" fill="rgba(74, 222, 128, 0.04)" /></svg>
+                        </div>
+                    </div>
+
+                    <div class="blip-runway-track" id="blip-runway-track">
+                        <span class="runway-text-item">SEARCH YOUR ENTIRE <span class="text-gradient-purple">CLIPBOARD HISTORY</span> IN <span class="text-gradient-cyan">MILLISECONDS</span> — <span style="background: linear-gradient(135deg, #fda4af 0%, #fb7185 50%, #f472b6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">FUZZY</span>, <span class="text-gradient-emerald">INSTANT</span></span>
+                        <span class="runway-text-item text-gradient-cyan"></span>
+                        <span class="runway-text-item text-gradient-purple">INSTANT SEARCH</span>
+                    </div>
+                </div>
+
+                <!-- Stage B: Headline -->
+                <div class="blip-intro-text absolute inset-0 flex flex-col items-center justify-center text-center max-w-4xl mx-auto px-6 z-10 space-y-6 opacity-0 pointer-events-none">
+                    <h2 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.35] sm:leading-[1.3]">
+                        Find anything you've
+                        <span class="animated-squiggly-wrapper text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
+                            ever copied.
+                            <svg class="animated-squiggly-svg" viewBox="0 0 400 18" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path class="animated-squiggly-path is-drawn" d="M 2 12 Q 10 2 18 12 T 34 12 T 50 12 T 66 12 T 82 12 T 98 12 T 114 12 T 130 12 T 146 12 T 162 12 T 178 12 T 194 12 T 210 12 T 226 12 T 242 12 T 258 12 T 274 12 T 290 12 T 306 12 T 322 12 T 338 12 T 354 12 T 370 12 T 386 12 T 398 12" stroke="url(#purple-grad-squig)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <defs><linearGradient id="purple-grad-squig" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#c084fc" /><stop offset="50%" stop-color="#f472b6" /><stop offset="100%" stop-color="#38bdf8" /></linearGradient></defs>
+                            </svg>
+                        </span>
+                    </h2>
+                    <p class="apple-scrub-text apple-subheadline max-w-2xl mx-auto pt-2">Type to search. Fuzzy, case-insensitive, across content and filenames. Up to 1000 items, always ready.</p>
+                </div>
+
+                <!-- Stage C: Video Frame -->
+                <div class="blip-85vw-video-frame relative z-20 opacity-0">
+                    <div class="flex flex-col items-center justify-center gap-4 text-white/30 py-32">
+                        <span class="material-symbols-outlined text-6xl">search</span>
+                        <span class="text-sm font-medium">Search demo video coming soon</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 1B. WHAT RECALL CAN HOLD — SLOT DRUM -->
+        <section id="feature-content-types" class="force-dark relative w-full min-h-[400vh] bg-black border-t border-[var(--color-border-color)]">
+            <div class="blip-actions-sticky-stage h-screen w-full flex flex-col items-center justify-center overflow-hidden px-4">
+
+                <!-- Stage 1: Slot Reel -->
+                <div class="slot-reel-stage-center absolute inset-0 flex flex-col items-center justify-center text-center w-full px-6 z-10">
+                    <div class="slot-reel-container flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 w-full max-w-5xl">
+                        <div class="slot-phrase-wrap shrink-0 text-center md:text-right">
+                            <h3 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight whitespace-nowrap">
+                                Recall remembers
+                            </h3>
+                        </div>
+
+                        <div class="slot-reel-viewport w-full">
+                            <div class="slot-reel-strip" id="slot-reel-strip">
+                                <div class="slot-item" data-index="0">code snippets</div>
+                                <div class="slot-item" data-index="1">copied URLs</div>
+                                <div class="slot-item" data-index="2">email addresses</div>
+                                <div class="slot-item" data-index="3">phone numbers</div>
+                                <div class="slot-item" data-index="4">screenshots</div>
+                                <div class="slot-item" data-index="5">rich text</div>
+                                <div class="slot-item" data-index="6">file paths</div>
+                                <div class="slot-item" data-index="7">passwords you meant to save</div>
+                                <div class="slot-item" data-index="8">that link you had open</div>
+                                <div class="slot-item" data-index="9">that paragraph you deleted</div>
+                                <div class="slot-item" data-index="10">the address you typed twice</div>
+                                <div class="slot-item" data-index="11">every piece of text</div>
+                                <div class="slot-item" data-index="12">every image</div>
+                                <div class="slot-item" data-index="13">every file reference</div>
+                                <div class="slot-item is-adjacent" data-index="14">everything you copy</div>
+                                <div class="slot-item is-active" data-index="15">everything</div>
+                                <div class="slot-item is-adjacent" data-index="16">always.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stage 2: App ecosystem (apps that paste into) -->
+                <div id="blip-apps-showcase-matrix" class="absolute inset-0 flex flex-col items-center justify-center text-center w-full max-w-6xl mx-auto px-4 opacity-0 pointer-events-none z-20">
+                    <div class="flex flex-col items-center justify-center w-full h-full pt-16 pb-8">
+                        <div class="text-center space-y-2 shrink-0 px-4">
+                            <h4 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">Paste into any app.</h4>
+                            <p class="text-sm text-white/60 max-w-lg mx-auto">Smart paste fires ⌘V directly into the app you were just using — no extra steps.</p>
+                        </div>
+
+                        <div class="app-columns-wrapper flex-1 w-full flex justify-center">
+                            <div class="flex justify-center gap-4 sm:gap-6 w-full max-w-full">
+                                <div class="app-column col-up shrink-0" id="app-col-1">
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/safari.svg" alt="Safari" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Safari</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/chrome.svg" alt="Chrome" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Chrome</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/mail.png" alt="Mail" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Mail</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/notes.svg" alt="Notes" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Notes</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/finder.png" alt="Finder" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Finder</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/messages.svg" alt="Messages" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Messages</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/slack.svg" alt="Slack" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Slack</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/notion.svg" alt="Notion" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Notion</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/discord.svg" alt="Discord" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Discord</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/calendar.png" alt="Calendar" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Calendar</span></div>
+                                </div>
+                                <div class="app-column col-down shrink-0" id="app-col-2">
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/figma.svg" alt="Figma" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Figma</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/xcode.svg" alt="Xcode" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Xcode</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/photoshop.svg" alt="Photoshop" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Photoshop</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/illustrator.svg" alt="Illustrator" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Illustrator</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/excel.svg" alt="Excel" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Excel</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/spotify.svg" alt="Spotify" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Spotify</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/firefox.svg" alt="Firefox" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Firefox</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/youtube.png" alt="YouTube" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">YouTube</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/maps.svg" alt="Maps" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Maps</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/shortcuts.png" alt="Shortcuts" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Shortcuts</span></div>
+                                </div>
+                                <div class="app-column col-up shrink-0 hidden sm:flex" id="app-col-3">
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/finalcut.png" alt="Final Cut" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Final Cut</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/logicpro.png" alt="Logic Pro" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Logic Pro</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/blender.svg" alt="Blender" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Blender</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/appstore.svg" alt="App Store" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">App Store</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/settings.png" alt="Settings" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Settings</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/photos.svg" alt="Photos" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Photos</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/voicememos.png" alt="Voice Memos" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Voice Memos</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/facetime.svg" alt="FaceTime" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">FaceTime</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/music.svg" alt="Music" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Music</span></div>
+                                    <div class="app-card-vertical"><div class="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 shrink-0 overflow-hidden"><img src="./images/netflix.svg" alt="Netflix" class="w-full h-full object-contain rounded-xl" loading="lazy"></div><span class="text-sm font-bold text-white tracking-wide truncate">Netflix</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- 2. SMART PASTE -->
+        <section id="feature-smart-paste" class="min-h-screen py-32 px-6 max-w-7xl mx-auto flex flex-col justify-center border-t border-[var(--color-border-color)]">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-6 space-y-6" style="translate: none; rotate: none; scale: none; filter: blur(0px); transform: translate(0px, 0px); opacity: 1;">
+                    <h2 class="apple-headline text-gradient-cyan">Smart Paste.</h2>
+                    <p class="text-xl sm:text-2xl font-bold text-[var(--color-text-primary)] leading-snug">
+                        Press ↵ and it pastes straight into what you were doing.
+                    </p>
+                    <p class="apple-scrub-text apple-subheadline"><span class="apple-word" style="opacity: 1;">No</span> <span class="apple-word" style="opacity: 1;">extra</span> <span class="apple-word" style="opacity: 1;">⌘V.</span> <span class="apple-word" style="opacity: 1;">Recall</span> <span class="apple-word" style="opacity: 1;">copies</span> <span class="apple-word" style="opacity: 1;">the</span> <span class="apple-word" style="opacity: 1;">item,</span> <span class="apple-word" style="opacity: 1;">dismisses</span> <span class="apple-word" style="opacity: 1;">the</span> <span class="apple-word" style="opacity: 1;">panel,</span> <span class="apple-word" style="opacity: 1;">and</span> <span class="apple-word" style="opacity: 1;">fires</span> <span class="apple-word" style="opacity: 1;">the</span> <span class="apple-word" style="opacity: 1;">paste</span> <span class="apple-word" style="opacity: 1;">into</span> <span class="apple-word" style="opacity: 1;">the</span> <span class="apple-word" style="opacity: 1;">previous</span> <span class="apple-word" style="opacity: 1;">app</span> <span class="apple-word" style="opacity: 1;">automatically.</span></p>
+                </div>
+                <div class="lg:col-span-6">
+                    <div class="clean-video-frame" style="translate: none; rotate: none; scale: none; filter: brightness(1); transform: translate(0px, 0px); opacity: 1;">
+                        <div class="flex flex-col items-center justify-center gap-4 text-white/30 py-32 bg-[var(--color-secondary)] rounded-2xl">
+                            <span class="material-symbols-outlined text-6xl">content_paste</span>
+                            <span class="text-sm font-medium">Smart paste demo coming soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 3. PRIVACY -->
+        <section id="feature-privacy" class="min-h-screen py-32 px-6 border-t border-[var(--color-border-color)]">
+            <div class="max-w-7xl mx-auto space-y-20">
+                <div class="text-center max-w-4xl mx-auto space-y-6" style="translate: none; rotate: none; scale: none; filter: blur(0px); transform: translate(0px, 0px); opacity: 1;">
+                    <h2 class="apple-headline text-gradient-purple">
+                        Privacy first.<br>100% local.
+                    </h2>
+                    <p class="apple-scrub-text apple-subheadline max-w-3xl mx-auto"><span class="apple-word" style="opacity: 1;">Everything</span> <span class="apple-word" style="opacity: 1;">stays</span> <span class="apple-word" style="opacity: 1;">on</span> <span class="apple-word" style="opacity: 1;">your</span> <span class="apple-word" style="opacity: 1;">Mac.</span> <span class="apple-word" style="opacity: 1;">No</span> <span class="apple-word" style="opacity: 1;">cloud,</span> <span class="apple-word" style="opacity: 1;">no</span> <span class="apple-word" style="opacity: 1;">sync,</span> <span class="apple-word" style="opacity: 1;">no</span> <span class="apple-word" style="opacity: 1;">servers.</span></p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                    <div class="security-pillar-card space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-2xl">lock</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-[var(--color-text-primary)]">Stored Locally</h4>
+                        <p class="apple-scrub-text text-xs text-[var(--color-text-secondary)] leading-relaxed"><span class="apple-word" style="opacity: 1;">All</span> <span class="apple-word" style="opacity: 1;">clipboard</span> <span class="apple-word" style="opacity: 1;">history</span> <span class="apple-word" style="opacity: 1;">is</span> <span class="apple-word" style="opacity: 1;">saved</span> <span class="apple-word" style="opacity: 1;">to</span> <span class="apple-word" style="opacity: 1;">~/Library/Application Support/Recall</span> <span class="apple-word" style="opacity: 1;">on</span> <span class="apple-word" style="opacity: 1;">your</span> <span class="apple-word" style="opacity: 1;">device</span> <span class="apple-word" style="opacity: 1;">only.</span></p>
+                    </div>
+
+                    <div class="security-pillar-card space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-2xl">shield</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-[var(--color-text-primary)]">Sensitive Content Filter</h4>
+                        <p class="apple-scrub-text text-xs text-[var(--color-text-secondary)] leading-relaxed"><span class="apple-word" style="opacity: 1;">OTP</span> <span class="apple-word" style="opacity: 1;">codes,</span> <span class="apple-word" style="opacity: 1;">credit</span> <span class="apple-word" style="opacity: 1;">cards,</span> <span class="apple-word" style="opacity: 1;">and</span> <span class="apple-word" style="opacity: 1;">password</span> <span class="apple-word" style="opacity: 1;">manager</span> <span class="apple-word" style="opacity: 1;">output</span> <span class="apple-word" style="opacity: 1;">are</span> <span class="apple-word" style="opacity: 1;">automatically</span> <span class="apple-word" style="opacity: 1;">blocked</span> <span class="apple-word" style="opacity: 1;">from</span> <span class="apple-word" style="opacity: 1;">being</span> <span class="apple-word" style="opacity: 1;">saved.</span></p>
+                    </div>
+
+                    <div class="security-pillar-card space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-2xl">block</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-[var(--color-text-primary)]">App Exclusions</h4>
+                        <p class="apple-scrub-text text-xs text-[var(--color-text-secondary)] leading-relaxed"><span class="apple-word" style="opacity: 1;">Block</span> <span class="apple-word" style="opacity: 1;">any</span> <span class="apple-word" style="opacity: 1;">app</span> <span class="apple-word" style="opacity: 1;">from</span> <span class="apple-word" style="opacity: 1;">being</span> <span class="apple-word" style="opacity: 1;">monitored</span> <span class="apple-word" style="opacity: 1;">—</span> <span class="apple-word" style="opacity: 1;">1Password,</span> <span class="apple-word" style="opacity: 1;">Bitwarden,</span> <span class="apple-word" style="opacity: 1;">banking</span> <span class="apple-word" style="opacity: 1;">apps,</span> <span class="apple-word" style="opacity: 1;">anything</span> <span class="apple-word" style="opacity: 1;">you</span> <span class="apple-word" style="opacity: 1;">choose.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 4. PINNING -->
+        <section id="feature-pinning" class="min-h-screen py-32 px-6 max-w-7xl mx-auto flex flex-col justify-center border-t border-[var(--color-border-color)]">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-6 space-y-6" style="translate: none; rotate: none; scale: none; filter: blur(0px); transform: translate(0px, 0px); opacity: 1;">
+                    <h2 class="apple-headline text-gradient-apple">Pin what matters.</h2>
+                    <p class="text-xl sm:text-2xl font-bold text-[var(--color-text-primary)] leading-snug">
+                        Keep your most-used snippets at the top, forever.
+                    </p>
+                    <p class="apple-scrub-text apple-subheadline"><span class="apple-word" style="opacity: 1;">Pin</span> <span class="apple-word" style="opacity: 1;">items</span> <span class="apple-word" style="opacity: 1;">with</span> <span class="apple-word" style="opacity: 1;">⌘P</span> <span class="apple-word" style="opacity: 1;">and</span> <span class="apple-word" style="opacity: 1;">they</span> <span class="apple-word" style="opacity: 1;">survive</span> <span class="apple-word" style="opacity: 1;">pruning,</span> <span class="apple-word" style="opacity: 1;">auto-expire,</span> <span class="apple-word" style="opacity: 1;">and</span> <span class="apple-word" style="opacity: 1;">history</span> <span class="apple-word" style="opacity: 1;">clears.</span> <span class="apple-word" style="opacity: 1;">Your</span> <span class="apple-word" style="opacity: 1;">essential</span> <span class="apple-word" style="opacity: 1;">snippets</span> <span class="apple-word" style="opacity: 1;">are</span> <span class="apple-word" style="opacity: 1;">always</span> <span class="apple-word" style="opacity: 1;">one</span> <span class="apple-word" style="opacity: 1;">shortcut</span> <span class="apple-word" style="opacity: 1;">away.</span></p>
+                </div>
+                <div class="lg:col-span-6">
+                    <div class="clean-video-frame" style="translate: none; rotate: none; scale: none; filter: brightness(1); transform: translate(0px, 0px); opacity: 1;">
+                        <div class="flex flex-col items-center justify-center gap-4 text-white/30 py-32 bg-[var(--color-secondary)] rounded-2xl">
+                            <span class="material-symbols-outlined text-6xl">push_pin</span>
+                            <span class="text-sm font-medium">Pinning demo coming soon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 5. AND MUCH MORE — MARQUEE -->
+        <section id="feature-more" class="py-32 overflow-hidden border-t border-[var(--color-border-color)] bg-[var(--color-surface)]">
+            <div class="text-center max-w-4xl mx-auto mb-16 px-6 space-y-4">
+                <h2 class="apple-headline text-gradient-apple">And so much more.</h2>
+                <p class="text-lg text-[var(--color-text-secondary)] max-w-2xl mx-auto font-medium">
+                    Every clipboard feature you ever wished macOS had, built in.
+                </p>
+            </div>
+
+            <!-- Marquee Track 1 -->
+            <div class="marquee-container mb-6">
+                <div class="marquee-track">
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-blue-400">filter_list</span> <span class="font-bold text-sm">Filter Tabs: Text · Links · Images · Files · Code</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-purple-400">push_pin</span> <span class="font-bold text-sm">Pin Items Permanently</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-emerald-400">timer</span> <span class="font-bold text-sm">Auto-Expire History</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-amber-400">keyboard</span> <span class="font-bold text-sm">Custom Global Shortcut</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-cyan-400">palette</span> <span class="font-bold text-sm">Light / Dark / System Theme</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-pink-400">image</span> <span class="font-bold text-sm">Image Clipboard History</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-red-400">deduplication</span> <span class="font-bold text-sm">Auto-Deduplication</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-yellow-400">login</span> <span class="font-bold text-sm">Launch at Login</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-emerald-400">app_blocking</span> <span class="font-bold text-sm">App Exclusion List</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-indigo-400">adaptive_audio_mic</span> <span class="font-bold text-sm">Adaptive App Icon</span></div>
+                    <!-- Duplicate for loop -->
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-blue-400">filter_list</span> <span class="font-bold text-sm">Filter Tabs: Text · Links · Images · Files · Code</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-purple-400">push_pin</span> <span class="font-bold text-sm">Pin Items Permanently</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-emerald-400">timer</span> <span class="font-bold text-sm">Auto-Expire History</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-amber-400">keyboard</span> <span class="font-bold text-sm">Custom Global Shortcut</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-cyan-400">palette</span> <span class="font-bold text-sm">Light / Dark / System Theme</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-pink-400">image</span> <span class="font-bold text-sm">Image Clipboard History</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-red-400">deduplication</span> <span class="font-bold text-sm">Auto-Deduplication</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-yellow-400">login</span> <span class="font-bold text-sm">Launch at Login</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-emerald-400">app_blocking</span> <span class="font-bold text-sm">App Exclusion List</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-indigo-400">adaptive_audio_mic</span> <span class="font-bold text-sm">Adaptive App Icon</span></div>
+                </div>
+            </div>
+
+            <!-- Marquee Track 2 (Reverse) -->
+            <div class="marquee-container pb-24">
+                <div class="marquee-track reverse">
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-indigo-400">menu_book</span> <span class="font-bold text-sm">Up to 1000 Items</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-emerald-400">code</span> <span class="font-bold text-sm">Code Snippet Detection</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-yellow-400">link</span> <span class="font-bold text-sm">URL Detection & Filtering</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-red-400">delete</span> <span class="font-bold text-sm">Delete Items with ⌘⌫</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-pink-400">123</span> <span class="font-bold text-sm">Quick Select by Position (1-9)</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-cyan-400">screenshot_monitor</span> <span class="font-bold text-sm">Screenshot Capture</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-amber-400">swap_horiz</span> <span class="font-bold text-sm">Tab Navigation with ⌘← / ⌘→</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-purple-400">email</span> <span class="font-bold text-sm">Email Detection & Filtering</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-blue-400">menu_open</span> <span class="font-bold text-sm">Menu Bar Access</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-emerald-400">history</span> <span class="font-bold text-sm">Persist Across Restarts</span></div>
+                    <!-- Duplicate for loop -->
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-indigo-400">menu_book</span> <span class="font-bold text-sm">Up to 1000 Items</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-emerald-400">code</span> <span class="font-bold text-sm">Code Snippet Detection</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-yellow-400">link</span> <span class="font-bold text-sm">URL Detection & Filtering</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-red-400">delete</span> <span class="font-bold text-sm">Delete Items with ⌘⌫</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-pink-400">123</span> <span class="font-bold text-sm">Quick Select by Position (1-9)</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-cyan-400">screenshot_monitor</span> <span class="font-bold text-sm">Screenshot Capture</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-amber-400">swap_horiz</span> <span class="font-bold text-sm">Tab Navigation with ⌘← / ⌘→</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-purple-400">email</span> <span class="font-bold text-sm">Email Detection & Filtering</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-blue-400">menu_open</span> <span class="font-bold text-sm">Menu Bar Access</span></div>
+                    <div class="apple-glass rounded-2xl px-6 py-4 flex items-center gap-3"><span class="material-symbols-outlined text-emerald-400">history</span> <span class="font-bold text-sm">Persist Across Restarts</span></div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- FINAL CTA -->
+        <section id="final-cta-section" class="py-32 px-6 border-t border-[var(--color-border-color)] bg-[var(--color-surface)] flex flex-col items-center justify-center">
+            <div class="text-center max-w-4xl mx-auto space-y-6">
+                <h2 class="apple-headline text-gradient-apple">Never lose a copy again.</h2>
+                <p class="apple-subheadline max-w-2xl mx-auto text-[var(--color-text-secondary)]">
+                    Recall is free, open source, and built for macOS. No subscription, no account, no cloud.
+                </p>
+
+                <div class="flex flex-wrap items-center justify-center gap-4 pt-6">
+                    <a href="https://github.com/recall-macos/recall-macos/releases/latest/download/Recall.dmg" class="apple-cta-btn w-full sm:w-auto">
+                        <span class="material-symbols-outlined">download</span> Download for macOS
+                    </a>
+                    <a href="https://github.com/recall-macos/recall-macos" target="_blank" rel="noopener noreferrer" class="apple-secondary-btn w-full sm:w-auto">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" /></svg>
+                        View on GitHub
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SECTION DOCK -->
+    <nav class="apple-dock" id="section-dock" aria-label="Section Navigation">
+        <a href="#hero-section" class="dock-pill" data-section="hero-section"><span class="material-symbols-outlined text-xs">home</span> Overview</a>
+        <a href="#feature-search" class="dock-pill" data-section="feature-search"><span class="material-symbols-outlined text-xs">search</span> Search</a>
+        <a href="#feature-content-types" class="dock-pill" data-section="feature-content-types"><span class="material-symbols-outlined text-xs">content_paste</span> History</a>
+        <a href="#feature-smart-paste" class="dock-pill" data-section="feature-smart-paste"><span class="material-symbols-outlined text-xs">bolt</span> Paste</a>
+        <a href="#feature-privacy" class="dock-pill" data-section="feature-privacy"><span class="material-symbols-outlined text-xs">lock</span> Privacy</a>
+        <a href="#feature-pinning" class="dock-pill" data-section="feature-pinning"><span class="material-symbols-outlined text-xs">push_pin</span> Pinning</a>
+        <a href="#feature-more" class="dock-pill" data-section="feature-more"><span class="material-symbols-outlined text-xs">apps</span> More</a>
+    </nav>
+
+    <!-- FOOTER -->
+    <footer class="main-footer border-t border-[var(--color-border-color)] bg-[var(--color-surface)] relative z-10">
+        <div class="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div class="space-y-4">
+                <div class="flex items-center space-x-3">
+                    <img src="./images/recall-icon.png" alt="Recall Logo" style="height:32px;width:32px;object-fit:contain;border-radius:8px;flex-shrink:0;">
+                    <span class="text-xl font-extrabold tracking-tight">Recall</span>
+                </div>
+                <p class="text-xs text-[var(--color-text-secondary)] leading-relaxed">
+                    Your clipboard, always within reach.<br>Native macOS clipboard manager.
+                </p>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-[var(--color-text-primary)] mb-4">Product</h4>
+                <ul class="space-y-2 text-xs text-[var(--color-text-secondary)]">
+                    <li><a href="./pages/changelog.html" class="hover:text-[var(--color-text-primary)] transition-colors">Changelog</a></li>
+                    <li><a href="https://github.com/recall-macos/recall-macos/releases/latest/download/Recall.dmg" class="hover:text-[var(--color-text-primary)] transition-colors">Download</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-[var(--color-text-primary)] mb-4">Support</h4>
+                <ul class="space-y-2 text-xs text-[var(--color-text-secondary)]">
+                    <li><a href="./pages/faq.html" class="hover:text-[var(--color-text-primary)] transition-colors">FAQ</a></li>
+                    <li><a href="https://github.com/recall-macos/recall-macos/issues" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--color-text-primary)] transition-colors">Report an Issue</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-[var(--color-text-primary)] mb-4">Resources</h4>
+                <ul class="space-y-2 text-xs text-[var(--color-text-secondary)]">
+                    <li><a href="https://github.com/recall-macos/recall-macos" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--color-text-primary)] transition-colors">GitHub</a></li>
+                    <li><a href="./pages/privacy.html" class="hover:text-[var(--color-text-primary)] transition-colors">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="py-6 border-t border-[var(--color-border-color)] text-center text-xs text-[var(--color-text-muted)]">
+            <p>© 2026 Neel Verma. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="./scripts/script.js"></script>
+
+</body></html>

@@ -149,6 +149,7 @@ private struct WelcomeStep: View {
             }
             .offset(y: appeared ? 0 : 8)
             .opacity(appeared ? 1 : 0)
+
         }
         .padding(.horizontal, 80)
         .onAppear {
@@ -184,7 +185,6 @@ private struct PermissionsStep: View {
     @ObservedObject var settings: AppSettings
 
     @State private var hasAccessibility = AXIsProcessTrusted()
-    @State private var screenshotEnabled = ScreenshotCapture.isEnabled
     @State private var launchAtLogin = (SMAppService.mainApp.status == .enabled)
 
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -232,19 +232,19 @@ private struct PermissionsStep: View {
                     }
                 )
 
-                PermissionRow(
-                    icon: "camera.viewfinder",
-                    iconColor: .purple,
-                    title: "Screenshot Capture",
-                    description: "Redirects ⌘⇧3 / ⌘⇧4 screenshots to your clipboard history.",
-                    badge: .optional,
-                    isGranted: screenshotEnabled,
-                    actionLabel: screenshotEnabled ? "Disable" : "Enable",
-                    onAction: {
-                        screenshotEnabled.toggle()
-                        ScreenshotCapture.setEnabled(screenshotEnabled)
-                    }
-                )
+                // PermissionRow(
+                //     icon: "camera.viewfinder",
+                //     iconColor: .purple,
+                //     title: "Screenshot Capture",
+                //     description: "Saves ⌘⇧3 / ⌘⇧4 screenshots to Desktop and adds them to your clipboard history.",
+                //     badge: .optional,
+                //     isGranted: screenshotEnabled,
+                //     actionLabel: screenshotEnabled ? "Disable" : "Enable",
+                //     onAction: {
+                //         screenshotEnabled.toggle()
+                //         ScreenshotCapture.setEnabled(screenshotEnabled)
+                //     }
+                // )
 
                 PermissionRow(
                     icon: "power",

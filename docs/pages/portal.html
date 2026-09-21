@@ -1,0 +1,2396 @@
+<html lang="en" class="theme-dark"><head><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sapphire - Manage Account & Subscriptions</title>
+    <link rel="canonical" href="https://sapphire-app.tech/portal">
+    <meta name="description" content="Manage your Sapphire account, authorize machines, and rotate license keys from the Sapphire Account Portal.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Sapphire">
+    <meta property="og:title" content="Sapphire - Manage Account & Subscriptions">
+    <meta property="og:description" content="Manage your Sapphire account, authorize machines, and rotate license keys from the Sapphire Account Portal.">
+    <meta property="og:image" content="https://sapphire-app.tech/sapphire-light.png">
+    <meta property="og:image:width" content="630">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://sapphire-app.tech/portal">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sapphire - Manage Account & Subscriptions">
+    <meta name="twitter:description" content="Manage your Sapphire account, authorize machines, and rotate license keys from the Sapphire Account Portal.">
+    <meta name="twitter:image" content="https://sapphire-app.tech/sapphire-light.png">
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <link rel="preload" href="./style.css" as="style">
+    <link rel="preload" href="./sapphire-light.png" as="image">
+    <link rel="stylesheet" href="../styles/style.css">
+    <script src="../scripts/cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+    <link rel="stylesheet" href="../styles/css2.css">
+    <script src="/v3/"></script>
+    <script src="../scripts/lenis.min.js"></script>
+    <script src="../scripts/marked.min.js"></script>
+    <style>
+        /* --- Apple Minimalist Portal Surface Design --- */
+        .portal-glass-panel {
+            background-color: var(--color-card-bg);
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border: 1px solid var(--color-card-border);
+            border-radius: 28px;
+        }
+
+        .portal-input {
+            background-color: var(--color-secondary);
+            border: 1px solid var(--color-card-border);
+            border-radius: 16px;
+            padding: 0.85rem 1.15rem;
+            color: var(--color-text-primary);
+            outline: none;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            font-size: 0.9rem;
+            width: 100%;
+        }
+        .portal-input:focus {
+            background-color: var(--color-card-bg-hover);
+            border-color: var(--color-text-primary);
+        }
+
+        /* Fix browser autofill: Chrome/Safari force their own text + background color onto
+           autofilled fields (their UA !important rules beat the page's). Restore the themed
+           text color via -webkit-text-fill-color and repaint the background with an inset
+           box-shadow. The color-scheme declarations in style.css also tell the browser which
+           theme the page is in, so its native autofill paint adapts to the background too. */
+        .portal-input:-webkit-autofill,
+        .portal-input:-webkit-autofill:hover,
+        .portal-input:-webkit-autofill:focus,
+        .portal-input:-internal-autofill-selected {
+            -webkit-text-fill-color: var(--color-text-primary) !important;
+            -webkit-box-shadow: 0 0 0 1000px var(--color-secondary) inset !important;
+            box-shadow: 0 0 0 1000px var(--color-secondary) inset !important;
+            caret-color: var(--color-text-primary) !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+        .portal-input:-moz-autofill {
+            -moz-box-shadow: 0 0 0 1000px var(--color-secondary) inset !important;
+            box-shadow: 0 0 0 1000px var(--color-secondary) inset !important;
+            filter: none;
+        }
+
+        .stripe-enclosed-container {
+            background-color: var(--color-secondary) !important;
+            border: 1px solid var(--color-card-border) !important;
+            border-radius: 16px !important;
+            padding: 1rem 1.25rem !important;
+            transition: all 0.2s ease;
+        }
+        .stripe-enclosed-container.StripeElement--focus {
+            border-color: var(--color-text-primary) !important;
+        }
+
+        .expandable-form {
+            max-height: 0;
+            opacity: 0;
+            transform: scale(0.99);
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .expandable-form.is-expanded {
+            max-height: 600px;
+            opacity: 1;
+            transform: scale(1);
+            margin-top: 1rem;
+        }
+
+        .portal-thread-container {
+            max-height: 600px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        .portal-thread-container::-webkit-scrollbar {
+            width: 5px;
+        }
+        .portal-thread-container::-webkit-scrollbar-thumb {
+            background: var(--color-card-border);
+            border-radius: 999px;
+        }
+
+        .markdown-preview h1, .markdown-preview h2, .markdown-preview h3 {
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .markdown-preview h1 { font-size: 1.25rem; }
+        .markdown-preview h2 { font-size: 1.1rem; }
+        .markdown-preview h3 { font-size: 1rem; }
+        .markdown-preview p {
+            font-size: 0.875rem;
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+        .markdown-preview code {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--color-secondary);
+            padding: 0.15rem 0.35rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+        }
+        .markdown-preview pre {
+            background-color: var(--color-secondary);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            margin-bottom: 0.75rem;
+        }
+        .markdown-preview ul, .markdown-preview ol {
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--color-text-primary);
+        }
+        .markdown-preview ul { list-style-type: disc; }
+        .markdown-preview ol { list-style-type: decimal; }
+        .markdown-preview blockquote {
+            border-left: 3px solid var(--color-text-primary);
+            padding-left: 1rem;
+            color: var(--color-text-secondary);
+            font-style: italic;
+            margin-bottom: 0.75rem;
+            background-color: var(--color-secondary);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+    <script>
+        const savedTheme = localStorage.getItem('sapphire-theme') || 'dark';
+        document.documentElement.className = `theme-${savedTheme}`;
+    </script>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.bottom-6{bottom:1.5rem}.left-0{left:0px}.right-0{right:0px}.right-6{right:1.5rem}.top-0{top:0px}.z-10{z-index:10}.z-50{z-index:50}.z-\[100\]{z-index:100}.z-\[110\]{z-index:110}.z-\[200\]{z-index:200}.col-span-1{grid-column:span 1 / span 1}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-4{margin-left:1rem;margin-right:1rem}.mx-auto{margin-left:auto;margin-right:auto}.my-auto{margin-top:auto;margin-bottom:auto}.mb-0\.5{margin-bottom:0.125rem}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-1{margin-left:0.25rem}.ml-1\.5{margin-left:0.375rem}.mr-2{margin-right:0.5rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-5{margin-top:1.25rem}.mt-6{margin-top:1.5rem}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-11{height:2.75rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-8{height:2rem}.h-9{height:2.25rem}.max-h-48{max-height:12rem}.min-h-\[140px\]{min-height:140px}.min-h-\[160px\]{min-height:160px}.min-h-\[600px\]{min-height:600px}.min-h-screen{min-height:100vh}.w-11{width:2.75rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-\[1px\]{width:1px}.w-auto{width:auto}.w-full{width:100%}.min-w-0{min-width:0px}.max-w-5xl{max-width:64rem}.max-w-7xl{max-width:80rem}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.scale-95{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes spin{to{transform:rotate(360deg)}}.animate-spin{animation:spin 1s linear infinite}.cursor-pointer{cursor:pointer}.resize-y{resize:vertical}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.625rem * var(--tw-space-x-reverse));margin-left:calc(0.625rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.whitespace-nowrap{white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-0{border-width:0px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-\[var\(--color-card-border\)\]{border-color:var(--color-card-border)}.border-emerald-500\/20{border-color:rgb(16 185 129 / 0.2)}.border-red-500\/20{border-color:rgb(239 68 68 / 0.2)}.bg-\[\#238636\]{--tw-bg-opacity:1;background-color:rgb(35 134 54 / var(--tw-bg-opacity, 1))}.bg-\[var\(--color-background\)\]{background-color:var(--color-background)}.bg-\[var\(--color-border-color\)\]{background-color:var(--color-border-color)}.bg-\[var\(--color-card-bg\)\]{background-color:var(--color-card-bg)}.bg-\[var\(--color-secondary\)\]{background-color:var(--color-secondary)}.bg-\[var\(--color-surface\)\]{background-color:var(--color-surface)}.bg-\[var\(--color-text-primary\)\]{background-color:var(--color-text-primary)}.bg-amber-500\/10{background-color:rgb(245 158 11 / 0.1)}.bg-black\/60{background-color:rgb(0 0 0 / 0.6)}.bg-red-500\/10{background-color:rgb(239 68 68 / 0.1)}.bg-transparent{background-color:transparent}.p-0{padding:0px}.p-1\.5{padding:0.375rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-7{padding-left:1.75rem;padding-right:1.75rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-3\.5{padding-top:0.875rem;padding-bottom:0.875rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.pb-2{padding-bottom:0.5rem}.pb-24{padding-bottom:6rem}.pb-4{padding-bottom:1rem}.pb-5{padding-bottom:1.25rem}.pl-2{padding-left:0.5rem}.pr-2{padding-right:0.5rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.pt-32{padding-top:8rem}.pt-4{padding-top:1rem}.pt-5{padding-top:1.25rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[12px\]{font-size:12px}.text-\[13px\]{font-size:13px}.text-\[14px\]{font-size:14px}.text-\[15px\]{font-size:15px}.text-\[16px\]{font-size:16px}.text-\[18px\]{font-size:18px}.text-\[9px\]{font-size:9px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.tracking-\[0\.4em\]{letter-spacing:0.4em}.tracking-tight{letter-spacing:-0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-\[var\(--color-background\)\]{color:var(--color-background)}.text-\[var\(--color-text-primary\)\]{color:var(--color-text-primary)}.text-\[var\(--color-text-secondary\)\]{color:var(--color-text-secondary)}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.underline-offset-2{text-underline-offset:2px}.opacity-0{opacity:0}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.duration-300{transition-duration:300ms}.duration-500{transition-duration:500ms}.empty\:hidden:empty{display:none}.hover\:bg-\[var\(--color-card-bg-hover\)\]:hover{background-color:var(--color-card-bg-hover)}.hover\:bg-\[var\(--color-secondary\)\]:hover{background-color:var(--color-secondary)}.hover\:bg-\[var\(--color-secondary-hover\)\]:hover{background-color:var(--color-secondary-hover)}.hover\:bg-red-500\/10:hover{background-color:rgb(239 68 68 / 0.1)}.hover\:text-\[var\(--color-text-primary\)\]:hover{color:var(--color-text-primary)}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.disabled\:pointer-events-none:disabled{pointer-events:none}.disabled\:opacity-50:disabled{opacity:0.5}.group:hover .group-hover\:text-\[var\(--color-text-primary\)\]{color:var(--color-text-primary)}@media (min-width: 640px){.sm\:block{display:block}.sm\:inline-flex{display:inline-flex}.sm\:flex-row{flex-direction:row}.sm\:items-end{align-items:flex-end}.sm\:items-center{align-items:center}}@media (min-width: 768px){.md\:col-span-3{grid-column:span 3 / span 3}.md\:block{display:block}.md\:inline-flex{display:inline-flex}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:p-12{padding:3rem}.md\:p-8{padding:2rem}}@media (min-width: 1024px){.lg\:sticky{position:sticky}.lg\:top-28{top:7rem}.lg\:flex{display:flex}.lg\:w-\[280px\]{width:280px}.lg\:flex-row{flex-direction:row}.lg\:gap-8{gap:2rem}}@media (min-width: 1280px){.xl\:col-span-2{grid-column:span 2 / span 2}.xl\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}</style></head>
+<body class="bg-[var(--color-background)] text-[var(--color-text-primary)] transition-colors duration-500 relative min-h-screen">
+    
+    <!-- Custom Floating Cursor -->
+    <div id="custom-cursor"></div>
+    <div id="dark-mode-gradient" style="opacity: 1;"></div>
+    <div id="dot-container">
+        <div id="dot-base" class="bg-dot-pattern"></div>
+        <div id="dot-spotlight"></div>
+    </div>
+
+    <!-- MAIN HEADER NAVBAR -->
+    <div class="fixed top-0 left-0 right-0 z-50 flex justify-center pt-5 px-4 pointer-events-none">
+        <header id="main-header" class="header-glass-capsule flex items-center justify-between gap-4 w-full max-w-5xl mx-auto pointer-events-auto">
+            
+            <!-- Left: Logo & Core Nav -->
+            <div class="flex items-center gap-6">
+                <a href="/" class="flex items-center space-x-2.5 whitespace-nowrap pl-2">
+                    <img id="sapphire-icon" src="../images/sapphire-light.png" alt="Sapphire Logo" class="h-6 w-auto">
+                    <span class="text-base font-extrabold tracking-tight text-[var(--color-text-primary)] hidden sm:block">Sapphire</span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-1">
+                    <a href="../pages/changelog.html" class="header-nav-link">Changelog</a>
+                    <a href="../pages/issues.html" class="header-nav-link">Issues</a>
+                    <a href="../pages/faq.html" class="header-nav-link">FAQ</a>
+                    <a href="../pages/portal.html" class="header-nav-link flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">account_circle</span> Account</a>
+                </nav>
+            </div>
+
+            <!-- Right: Controls & CTAs -->
+            <div class="flex items-center gap-3">
+                <!-- Theme Switcher: Colorful, Dark, Light -->
+                <div id="theme-switcher" class="theme-switcher-container hidden md:inline-flex">
+                    <input type="radio" id="theme-radio-colorful" name="theme" value="colorful" class="switch-radio">
+                    <label for="theme-radio-colorful" class="switch-label" title="Colorful"><span class="material-symbols-outlined">palette</span></label>
+                    <input type="radio" id="theme-radio-dark" name="theme" value="dark" class="switch-radio" checked>
+                    <label for="theme-radio-dark" class="switch-label" title="Dark Mode"><span class="material-symbols-outlined">dark_mode</span></label>
+                    <input type="radio" id="theme-radio-light" name="theme" value="light" class="switch-radio">
+                    <label for="theme-radio-light" class="switch-label" title="Light Mode"><span class="material-symbols-outlined">light_mode</span></label>
+                    <div class="switch-puck"></div>
+                </div>
+
+                <div class="h-5 w-[1px] bg-[var(--color-border-color)] hidden md:block mx-1"></div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2">
+                    <a href="../pages/subscribe.html" class="header-btn header-btn-subscribe">
+                        <span class="material-symbols-outlined text-[16px]">workspace_premium</span> Subscribe
+                    </a>
+                    <a href="https://github.com/cshariq/Sapphire/releases/latest/download/Sapphire.pkg" class="header-btn header-btn-download hidden sm:inline-flex">
+                        <span class="material-symbols-outlined text-[16px]">download</span> Download
+                    </a>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <!-- MAIN PORTAL WRAPPER -->
+    <div class="relative z-10 w-full min-h-screen flex flex-col justify-start items-center p-6 pt-32 pb-24 max-w-7xl mx-auto">
+        
+        <!-- LOGGED OUT STATE (OTP & Sign In) -->
+        <div id="login-container" class="w-full max-w-md mx-auto z-10 my-auto" style="display: block;">
+            <div class="portal-glass-panel p-8 md:p-12 shadow-2xl space-y-6 transition-all duration-300">
+                
+                <!-- State 1: OTP Request -->
+                <div id="otp-request-state" class="space-y-6">
+                    <div class="text-center space-y-2 mb-8">
+                        <h1 class="text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)]">Account Access</h1>
+                        <p class="text-xs text-[var(--color-text-secondary)] font-medium">Enter your billing email to manage your license and active devices.</p>
+                    </div>
+                    <form id="otp-request-form" class="space-y-4">
+                        <input type="email" id="request-email" placeholder="name@example.com" class="portal-input" required>
+                        <button type="submit" id="request-submit-btn" class="w-full bg-[var(--color-text-primary)] text-[var(--color-background)] font-bold py-3.5 rounded-2xl transition-transform active:scale-98 text-xs uppercase tracking-widest">
+                            Continue
+                        </button>
+                    </form>
+                    <div class="text-center pt-4">
+                        <button onclick="showRegister()" class="text-xs font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors flex items-center justify-center gap-1.5 mx-auto">
+                            New to Sapphire? <span class="text-[var(--color-text-primary)] underline underline-offset-2">Create Free Account</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- State 2: Free Registration Form -->
+                <div id="register-free-state" class="hidden space-y-6">
+                    <div class="text-center space-y-2 mb-8">
+                        <h1 class="text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)]">Create Account</h1>
+                        <p class="text-xs text-[var(--color-text-secondary)] font-medium">Generate a standard license key to get started.</p>
+                    </div>
+                    <form id="register-free-form" class="space-y-4">
+                        <input type="text" id="reg-name" placeholder="Full Name" class="portal-input" required>
+                        <input type="email" id="reg-email" placeholder="name@example.com" class="portal-input" required>
+                        <button type="submit" id="reg-submit-btn" class="w-full bg-[var(--color-text-primary)] text-[var(--color-background)] font-bold py-3.5 rounded-2xl transition-transform active:scale-98 text-xs uppercase tracking-widest">
+                            Create Free Account
+                        </button>
+                    </form>
+                    <div class="text-center pt-4">
+                        <button onclick="showLogin()" class="text-xs font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors flex items-center justify-center gap-1.5 mx-auto">
+                            <span class="material-symbols-outlined text-[14px]">arrow_back</span> Back to <span class="text-[var(--color-text-primary)] underline underline-offset-2">Sign In</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- State 3: OTP Verify Form -->
+                <div id="otp-verify-state" class="hidden space-y-6">
+                    <div>
+                        <button onclick="showLogin()" class="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] uppercase mb-4 transition-colors">
+                            <span class="material-symbols-outlined text-[12px]">arrow_back</span> Back
+                        </button>
+                        <h1 class="text-3xl font-extrabold tracking-tight mb-2 text-[var(--color-text-primary)]">Verify Identity</h1>
+                        <p class="text-xs text-[var(--color-text-secondary)] font-medium" id="verify-email-text">
+                            Enter the 6-digit code sent to your inbox.
+                        </p>
+                    </div>
+                    <form id="otp-verify-form" class="space-y-5">
+                        <input type="text" id="verify-code" placeholder="------" maxlength="6" pattern="\d{6}" class="portal-input text-center text-3xl tracking-[0.4em] font-mono font-black py-4" required>
+                        <button type="submit" id="verify-submit-btn" class="w-full bg-[var(--color-text-primary)] text-[var(--color-background)] font-bold py-3.5 rounded-2xl transition-transform active:scale-98 text-xs uppercase tracking-widest">
+                            Unlock Dashboard
+                        </button>
+                    </form>
+                    <div class="text-center pt-2">
+                        <button id="resend-otp-btn" onclick="resendVerificationCode()" class="text-[10px] font-bold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors uppercase tracking-widest disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-1.5 mx-auto">
+                            <span class="material-symbols-outlined text-[14px]">autorenew</span> Resend Code <span id="resend-timer-label"></span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DASHBOARD STATE -->
+        <div id="dashboard-container" class="hidden w-full relative z-10 transition-all duration-300">
+            
+            <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+                
+                <!-- SIDEBAR: Profile & Navigation -->
+                <div class="w-full lg:w-[280px] shrink-0 space-y-5 lg:sticky lg:top-28">
+                    
+                    <!-- Profile Card -->
+                    <div class="portal-glass-panel p-5">
+                        <!-- Header Profile -->
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-11 h-11 bg-[var(--color-secondary)] rounded-full flex items-center justify-center text-[var(--color-text-primary)] font-bold text-base border border-[var(--color-card-border)] shrink-0">
+                                <span class="material-symbols-outlined text-lg">person</span>
+                            </div>
+                            <div class="overflow-hidden flex-1">
+                                <div class="flex items-center justify-between">
+                                    <p id="user-name-display" class="text-sm font-bold text-[var(--color-text-primary)] truncate tracking-tight">My Account</p>
+                                    <button onclick="openProfileModal()" class="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"><span class="material-symbols-outlined text-[14px]">edit</span></button>
+                                </div>
+                                <p id="user-email-display" class="text-xs font-medium text-[var(--color-text-secondary)] truncate">user@example.com</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Nav Menu -->
+                        <nav class="space-y-1.5 flex flex-col">
+                            <button type="button" onclick="switchPortalTab('subscription')" id="tab-btn-subscription" class="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 bg-[var(--color-text-primary)] text-[var(--color-background)]">
+                                <span class="material-symbols-outlined text-[18px]">inventory_2</span> Subscription
+                            </button>
+                            <button type="button" onclick="switchPortalTab('billing')" id="tab-btn-billing" class="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 text-[var(--color-text-secondary)] hover:bg-[var(--color-secondary)] hover:text-[var(--color-text-primary)]">
+                                <span class="material-symbols-outlined text-[18px]">credit_card</span> Billing
+                            </button>
+                            <button type="button" onclick="switchPortalTab('feedback')" id="tab-btn-feedback" class="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 text-[var(--color-text-secondary)] hover:bg-[var(--color-secondary)] hover:text-[var(--color-text-primary)]">
+                                <span class="material-symbols-outlined text-[18px]">engineering</span> Support
+                            </button>
+                            <button type="button" onclick="switchPortalTab('devices')" id="tab-btn-devices" class="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 text-[var(--color-text-secondary)] hover:bg-[var(--color-secondary)] hover:text-[var(--color-text-primary)]">
+                                <span class="material-symbols-outlined text-[18px]">devices</span> Devices
+                            </button>
+                        </nav>
+
+                        <div class="mt-5 pt-4 border-t border-[var(--color-card-border)]">
+                            <button onclick="logoutPortal()" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-colors text-red-500 hover:bg-red-500/10">
+                                <span class="material-symbols-outlined text-[15px]">logout</span> Sign Out
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Clean License Key Box -->
+                    <div class="portal-glass-panel p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-[10px] font-bold text-[var(--color-text-secondary)] uppercase tracking-widest flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[13px]">key</span> Active License
+                            </h3>
+                            <button onclick="regenerateWebLicenseKey()" class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--color-secondary)] hover:bg-[var(--color-card-bg-hover)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors text-[9px] font-bold uppercase tracking-wider" title="Rotate Key">
+                                <span class="material-symbols-outlined text-[11px]">refresh</span> Rotate
+                            </button>
+                        </div>
+                        <div class="bg-[var(--color-secondary)] p-3 rounded-xl cursor-pointer transition-colors hover:bg-[var(--color-secondary-hover)] flex items-center justify-between group" onclick="copyLicenseKey()">
+                            <span id="display-license-key" class="font-mono font-bold text-xs tracking-widest text-[var(--color-text-primary)] truncate pr-2">SPH-XXXX</span>
+                            <span class="material-symbols-outlined text-sm text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors shrink-0">content_copy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAIN TABBED CONTENT AREA -->
+                <div class="flex-1 w-full min-h-[600px]">
+                    <div class="space-y-6">
+                        
+                        <!-- TAB 1: SUBSCRIPTION METADATA -->
+                        <div id="tab-content-subscription" class="portal-tab-view space-y-6">
+                            
+                            <!-- Active Plan Banner -->
+                            <div class="portal-glass-panel p-6 md:p-8">
+                                <div class="flex justify-between items-start flex-wrap gap-4 mb-5">
+                                    <div>
+                                        <h2 class="text-xl font-bold tracking-tight mb-0.5 text-[var(--color-text-primary)]">Your Provisioned Plan</h2>
+                                        <p class="text-xs text-[var(--color-text-secondary)] font-medium">Manage your active subscription tiers and device limits.</p>
+                                    </div>
+                                </div>
+                                <div id="subscriptions-list-container" class="space-y-4"></div>
+                            </div>
+
+                            <!-- Invoices -->
+                            <div class="portal-glass-panel p-6 md:p-8">
+                                <h3 class="text-lg font-bold tracking-tight text-[var(--color-text-primary)] mb-4">Payment Invoices</h3>
+                                <div id="invoice-history-container" class="space-y-2.5"></div>
+                            </div>
+
+                        </div>
+
+                        <!-- TAB 2: PAYMENT & BILLING ADDRESS -->
+                        <div id="tab-content-billing" class="portal-tab-view hidden space-y-6">
+                            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6" id="billing-grid">
+                                
+                                <!-- Payment Methods -->
+                                <div class="portal-glass-panel p-6 md:p-8 space-y-5">
+                                    <div class="flex justify-between items-end pb-2">
+                                        <div>
+                                            <h3 class="text-lg font-bold text-[var(--color-text-primary)] tracking-tight">Payment Methods</h3>
+                                            <p class="text-xs text-[var(--color-text-secondary)] font-medium mt-0.5">Cards on file for automated renewal billing.</p>
+                                        </div>
+                                        <button onclick="toggleAddCardForm()" class="w-9 h-9 bg-[var(--color-secondary)] rounded-full flex items-center justify-center text-[var(--color-text-primary)] hover:bg-[var(--color-secondary-hover)] transition-colors shrink-0">
+                                            <span class="material-symbols-outlined text-[16px]">add</span>
+                                        </button>
+                                    </div>
+
+                                    <div id="pm-switcher" class="flex gap-2 p-1.5 bg-[var(--color-secondary)] rounded-xl overflow-x-auto scrollbar-none"></div>
+                                    
+                                    <div class="py-1">
+                                        <div id="pm-card-preview" class="flex justify-center"></div>
+                                    </div>
+                                    
+                                    <div id="pm-card-actions" class="flex justify-center gap-2"></div>
+
+                                    <div id="add-pm-container" class="expandable-form bg-[var(--color-secondary)] p-4 rounded-2xl space-y-3">
+                                        <div id="card-element-portal" class="stripe-enclosed-container"></div>
+                                        <div id="portal-card-errors" class="text-red-500 text-xs font-bold text-center"></div>
+                                        <button id="add-card-submit" onclick="submitNewCard()" class="bg-[var(--color-text-primary)] text-[var(--color-background)] w-full font-bold py-3 rounded-xl text-[10px] tracking-wider uppercase transition-transform active:scale-98">Save Payment Card</button>
+                                    </div>
+                                </div>
+
+                                <!-- Billing Address -->
+                                <div class="portal-glass-panel p-6 md:p-8 space-y-5">
+                                    <div class="flex justify-between items-end pb-2">
+                                        <div>
+                                            <h3 class="text-lg font-bold text-[var(--color-text-primary)] tracking-tight">Billing Address</h3>
+                                            <p class="text-xs text-[var(--color-text-secondary)] font-medium mt-0.5">Tax jurisdiction and invoice contact address.</p>
+                                        </div>
+                                        <button onclick="toggleBillingForm()" class="w-9 h-9 bg-[var(--color-secondary)] rounded-full flex items-center justify-center text-[var(--color-text-primary)] hover:bg-[var(--color-secondary-hover)] transition-colors shrink-0">
+                                            <span class="material-symbols-outlined text-[16px]">edit</span>
+                                        </button>
+                                    </div>
+
+                                    <div id="billing-info-display" class="font-medium leading-relaxed text-[var(--color-text-primary)] text-sm"></div>
+
+                                    <div id="billing-edit-container" class="expandable-form bg-[var(--color-secondary)] p-5 rounded-2xl space-y-3">
+                                        <input type="text" id="billing-address" placeholder="123 Main Street" class="portal-input">
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <input type="text" id="billing-city" placeholder="City" class="portal-input">
+                                            <input type="text" id="billing-state" placeholder="State / Prov" class="portal-input">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <!-- Custom Country Dropdown -->
+                                            <div class="relative w-full">
+                                                <input type="hidden" id="billing-country" value="US">
+                                                <button type="button" id="billing-country-btn" onclick="toggleCustomDropdown('billing-country-dropdown')" class="portal-input flex justify-between items-center text-xs text-left">
+                                                    <span id="billing-country-label">United States (US)</span>
+                                                    <span class="material-symbols-outlined text-[15px] text-[var(--color-text-secondary)]">expand_more</span>
+                                                </button>
+                                                <div id="billing-country-dropdown" class="absolute left-0 right-0 mt-2 max-h-48 overflow-y-auto bg-[var(--color-surface)] border border-[var(--color-card-border)] rounded-2xl shadow-2xl hidden z-50 p-1.5 scrollbar-none"><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">United States (US)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Canada (CA)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">United Kingdom (GB)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Germany (DE)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">France (FR)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Japan (JP)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Australia (AU)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">India (IN)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Brazil (BR)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Netherlands (NL)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Switzerland (CH)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Singapore (SG)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">New Zealand (NZ)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Sweden (SE)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Norway (NO)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Ireland (IE)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Spain (ES)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Italy (IT)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Belgium (BE)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Austria (AT)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Denmark (DK)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Finland (FI)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Mexico (MX)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">South Korea (KR)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Hong Kong (HK)</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">South Africa (ZA)</button></div>
+                                            </div>
+                                            <input type="text" id="postal-code" placeholder="Postal Code" class="portal-input">
+                                        </div>
+                                        <button id="update-billing-submit" onclick="submitBillingUpdate()" class="bg-[var(--color-text-primary)] text-[var(--color-background)] w-full font-bold py-3 rounded-xl text-[10px] tracking-wider uppercase transition-transform active:scale-98 mt-2">Save Details</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Billing Danger Zone -->
+                                <div id="billing-danger-zone" class="col-span-1 xl:col-span-2 hidden"></div>
+
+                            </div>
+                        </div>
+
+                        <div id="tab-content-feedback" class="portal-tab-view hidden space-y-5">
+                            <div class="portal-glass-panel p-6 md:p-8">
+                                
+                                <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 pb-4 border-b border-[var(--color-card-border)] gap-3">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-[var(--color-text-primary)] tracking-tight flex items-center gap-3">
+                                            Priority Support
+                                            <span id="feedback-lock-badge" class="hidden text-[9px] font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md uppercase tracking-widest flex items-center gap-1 shrink-0">
+                                                <span class="material-symbols-outlined text-[10px]">lock</span> Ultra Only
+                                            </span>
+                                        </h3>
+                                        <p class="text-xs text-[var(--color-text-secondary)] font-medium mt-1">Direct pipeline to the development core. Bypass standard triage queues.</p>
+                                    </div>
+                                    <div id="support-actions-container" class="flex items-center gap-3">
+                                        <button onclick="showNewTicketForm()" id="btn-new-ticket" class="hidden bg-[var(--color-text-primary)] text-[var(--color-background)] text-[10px] font-bold px-5 py-2.5 rounded-xl transition-transform active:scale-95 uppercase tracking-wider">New Ticket</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Locked State -->
+                                <div id="feedback-locked-state" class="hidden text-center py-12 px-5">
+                                    <span class="material-symbols-outlined text-4xl text-amber-500 mb-4">lock_shield</span>
+                                    <h3 class="text-xl font-bold text-[var(--color-text-primary)] mb-2 tracking-tight">Unlock Priority Access</h3>
+                                    <p class="text-xs font-medium text-[var(--color-text-secondary)] max-w-sm mx-auto leading-relaxed">Prioritized support tickets. Upgrade to Ultra to create up to 5 concurrent support tickets.</p>
+                                </div>
+                                
+                                <!-- Tickets List View -->
+                                <div id="ticket-list-view" class="hidden mt-2">
+                                    <div class="px-2 py-3 flex items-center text-sm font-bold text-[var(--color-text-primary)] mb-2">
+                                        <span class="material-symbols-outlined text-[16px] mr-2">adjust</span><span id="open-tickets-count">0</span><span class="ml-1.5 font-medium text-[var(--color-text-secondary)]">Open</span>
+                                    </div>
+                                    <div id="ticket-list-container" class="space-y-3"></div>
+                                </div>
+
+                                <!-- Composer Form View -->
+                                <div id="ticket-composer-view" class="hidden">
+                                    <div class="flex items-center justify-between mb-5">
+                                        <h3 class="text-lg font-bold text-[var(--color-text-primary)] tracking-tight">Create New Ticket</h3>
+                                        <button onclick="showTicketList()" class="text-[10px] bg-[var(--color-secondary)] px-3 py-1.5 rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] flex items-center gap-1 font-bold uppercase tracking-wider transition-colors"><span class="material-symbols-outlined text-[14px]">arrow_back</span> Back</button>
+                                    </div>
+                                    <form id="portal-feedback-form" onsubmit="submitWebFeedback(event)" class="space-y-4">
+                                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                            <div class="space-y-1">
+                                                <div class="relative w-full">
+                                                    <input type="hidden" id="feedback-category-input" value="Bug Report">
+                                                    <button type="button" id="feedback-category-btn" onclick="toggleCustomDropdown('feedback-category-dropdown')" class="portal-input flex justify-between items-center text-xs">
+                                                        <span id="feedback-category-label">Bug Report</span>
+                                                        <span class="material-symbols-outlined text-[15px] text-[var(--color-text-secondary)]">expand_more</span>
+                                                    </button>
+                                                    <div id="feedback-category-dropdown" class="absolute left-0 right-0 mt-2 max-h-48 overflow-y-auto bg-[var(--color-surface)] border border-[var(--color-card-border)] rounded-2xl shadow-2xl hidden z-50 p-1.5 scrollbar-none"><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Bug Report</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Feature Request</button><button type="button" class="w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none">Question</button></div>
+                                                </div>
+                                            </div>
+                                            <div class="space-y-1 md:col-span-3">
+                                                <input type="text" id="feedback-title-input" placeholder="Title" class="portal-input text-xs" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="rounded-2xl overflow-hidden bg-[var(--color-secondary)] border border-[var(--color-card-border)]">
+                                            <div class="flex p-2 gap-1 bg-[var(--color-secondary)] border-b border-[var(--color-card-border)]">
+                                                <button type="button" id="composer-tab-btn-write" onclick="switchComposerTab('write')" class="px-5 py-2 text-xs font-bold text-[var(--color-text-primary)] bg-[var(--color-card-bg)] rounded-xl transition-colors">Write</button>
+                                                <button type="button" id="composer-tab-btn-preview" onclick="switchComposerTab('preview')" class="px-5 py-2 text-xs font-bold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] rounded-xl transition-colors bg-transparent">Preview</button>
+                                            </div>
+                                            <div class="p-0 min-h-[160px] bg-[var(--color-card-bg)]">
+                                                <textarea id="feedback-body-input" placeholder="Leave a detailed comment..." rows="5" class="w-full bg-transparent border-0 outline-none text-xs text-[var(--color-text-primary)] font-medium leading-relaxed resize-y p-5 scrollbar-none" required oninput="handleComposerInput(this)"></textarea>
+                                                <div id="feedback-body-preview-container" class="hidden markdown-preview p-5 min-h-[140px]"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-[var(--color-secondary)] rounded-2xl p-4 border border-[var(--color-card-border)]">
+                                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                                <label class="flex items-center gap-3 cursor-pointer group px-1">
+                                                    <div class="w-8 h-8 rounded-full bg-[var(--color-card-bg)] flex items-center justify-center text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors">
+                                                        <span class="material-symbols-outlined text-[18px]">attach_file</span>
+                                                    </div>
+                                                    <span class="text-xs text-[var(--color-text-secondary)] font-medium group-hover:text-[var(--color-text-primary)] transition-colors">Attach diagnostic logs or screenshots</span>
+                                                    <input id="feedback-attachments-input" type="file" class="hidden" multiple onchange="handleAttachmentFilesChange(this)">
+                                                </label>
+                                            </div>
+                                            <div id="attachment-files-preview-list" class="flex flex-wrap gap-2 empty:hidden mt-3"></div>
+                                        </div>
+                                        
+                                        <div class="flex justify-end pt-3">
+                                            <button type="submit" id="feedback-submit-btn" class="bg-[var(--color-text-primary)] text-[var(--color-background)] font-bold px-7 py-3 rounded-xl text-[10px] tracking-wider uppercase transition-transform active:scale-95">Submit Issue</button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <!-- Thread View -->
+                                <div id="feedback-thread-view" class="hidden">
+                                    <div class="pb-5 mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-card-border)]">
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <span id="thread-ticket-badge" class="px-3 py-1 rounded-full text-[9px] font-bold text-white bg-[#238636] flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">adjust</span> Open</span>
+                                                <p class="text-[10px] text-[var(--color-text-secondary)] font-bold uppercase tracking-wider">Ticket #<span id="thread-ticket-number">---</span></p>
+                                            </div>
+                                            <a id="thread-ticket-link" href="#" target="_blank" rel="noopener noreferrer" class="font-bold text-2xl text-[var(--color-text-primary)] hover:underline flex items-center gap-2 truncate tracking-tight">
+                                                <span id="thread-ticket-title" class="truncate">Issue Title</span>
+                                                <span class="material-symbols-outlined text-lg text-[var(--color-text-secondary)]">open_in_new</span>
+                                            </a>
+                                            <p class="text-xs text-[var(--color-text-secondary)] mt-1.5 font-medium">Opened on <span id="thread-ticket-created"></span></p>
+                                        </div>
+                                        <button onclick="showTicketList()" class="text-[10px] bg-[var(--color-secondary)] px-4 py-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] flex items-center gap-1 font-bold uppercase tracking-wider shrink-0 transition-colors"><span class="material-symbols-outlined text-[14px]">arrow_back</span> Back</button>
+                                    </div>
+
+                                    <div class="portal-thread-container space-y-4 pb-4" id="thread-comments-feed"></div>
+
+                                    <div class="pt-4 border-t border-[var(--color-card-border)] text-right">
+                                        <a id="thread-write-reply-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 text-[10px] uppercase tracking-wider font-bold text-[var(--color-text-primary)] bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)] px-5 py-3 rounded-xl transition-colors">
+                                            <span class="material-symbols-outlined text-[16px]">forum</span> View on GitHub
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 4: MY CONNECTED DEVICES -->
+                        <div id="tab-content-devices" class="portal-tab-view hidden space-y-5">
+                            <div class="portal-glass-panel p-6 md:p-8">
+                                <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 pb-4 border-b border-[var(--color-card-border)] gap-3">
+                                    <div>
+                                        <h2 class="text-xl font-bold tracking-tight text-[var(--color-text-primary)]">Connected Devices</h2>
+                                        <p class="text-xs text-[var(--color-text-secondary)] font-medium mt-0.5">Manage devices authorized with your license key.</p>
+                                    </div>
+                                    <div class="w-9 h-9 bg-[var(--color-secondary)] rounded-full flex items-center justify-center text-[var(--color-text-primary)] shrink-0">
+                                        <span class="material-symbols-outlined text-[18px]">devices</span>
+                                    </div>
+                                </div>
+                                <div id="devices-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full"></div>
+                            </div>
+
+                            <!-- Revoked Devices -->
+                            <div id="revoked-devices-section" class="portal-glass-panel p-6 md:p-8">
+                                <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 pb-4 border-b border-[var(--color-card-border)] gap-3">
+                                    <div>
+                                        <h2 class="text-xl font-bold tracking-tight text-[var(--color-text-primary)]">Revoked Devices</h2>
+                                        <p class="text-xs text-[var(--color-text-secondary)] font-medium mt-0.5">Previously revoked devices. Remove them from this list if you want to use the app on the device again.</p>
+                                    </div>
+                                    <div class="w-9 h-9 bg-red-500/10 rounded-full flex items-center justify-center text-red-400 shrink-0">
+                                        <span class="material-symbols-outlined text-[18px]">block</span>
+                                    </div>
+                                </div>
+                                <div id="revoked-devices-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="profile-edit-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="portal-glass-panel p-8 max-w-sm w-full shadow-2xl transform scale-95 transition-transform duration-300 mx-4">
+            <h3 class="text-xl font-bold text-[var(--color-text-primary)] mb-1">Edit Profile</h3>
+            <p class="text-xs text-[var(--color-text-secondary)] mb-6">Update your account identity.</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider ml-1">Full Name</label>
+                    <input type="text" id="edit-profile-name" class="portal-input mt-1" placeholder="John Doe">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider ml-1">Email Address</label>
+                    <input type="email" id="edit-profile-email" class="portal-input mt-1" placeholder="john@example.com">
+                </div>
+                <div id="edit-profile-error" class="text-xs text-red-500 font-bold hidden"></div>
+                <div class="flex justify-end gap-3 pt-4 border-t border-[var(--color-card-border)] mt-6">
+                    <button onclick="closeProfileModal()" class="px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] hover:bg-[var(--color-secondary)] transition-colors">Cancel</button>
+                    <button onclick="submitProfileUpdate()" id="save-profile-btn" class="px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider bg-[var(--color-text-primary)] text-[var(--color-background)] transition-transform active:scale-95">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile 2FA Verification Modal -->
+    <div id="profile-otp-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="portal-glass-panel p-8 max-w-sm w-full shadow-2xl transform scale-95 transition-transform duration-300 mx-4">
+            <h3 class="text-xl font-bold text-[var(--color-text-primary)] mb-1">Verify Changes</h3>
+            <p class="text-xs text-[var(--color-text-secondary)] mb-6 font-medium">Enter the authorization code sent to your email to confirm profile modifications.</p>
+            <div class="space-y-4">
+                <input type="text" id="profile-verify-code" placeholder="------" maxlength="6" pattern="\d{6}" class="portal-input text-center text-3xl font-mono tracking-[0.4em] font-black py-4" required>
+                <div id="profile-otp-error" class="text-xs text-red-500 font-bold hidden text-center"></div>
+                <div class="flex flex-col gap-2 pt-2">
+                    <button onclick="confirmProfileOTP()" id="confirm-profile-btn" class="w-full bg-[var(--color-text-primary)] text-[var(--color-background)] font-bold py-3 rounded-xl text-[10px] uppercase tracking-wider transition-transform active:scale-95">Verify &amp; Save</button>
+                    <button onclick="cancelProfileOTP()" class="w-full text-xs font-bold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors py-2 uppercase tracking-wider">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Action 2FA Verification Modal -->
+    <div id="action-otp-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="portal-glass-panel p-8 max-w-sm w-full shadow-2xl transform scale-95 transition-transform duration-300 mx-4">
+            <h3 class="text-xl font-bold text-[var(--color-text-primary)] mb-1">Authorization Required</h3>
+            <p class="text-xs text-[var(--color-text-secondary)] mb-6 font-medium">Enter the authorization code sent to your inbox to complete this action.</p>
+            <div class="space-y-4">
+                <input type="text" id="action-verify-code" placeholder="------" maxlength="6" pattern="\d{6}" class="portal-input text-center text-3xl font-mono tracking-[0.4em] font-black py-4" required>
+                <div id="action-otp-error" class="text-xs text-red-500 font-bold hidden text-center"></div>
+                <div class="flex flex-col gap-2 pt-2">
+                    <button onclick="confirmActionOTP()" id="confirm-action-btn" class="w-full bg-[var(--color-text-primary)] text-[var(--color-background)] font-bold py-3 rounded-xl text-[10px] uppercase tracking-wider transition-transform active:scale-95">Confirm</button>
+                    <button onclick="cancelActionOTP()" class="w-full text-xs font-bold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors py-2 uppercase tracking-wider">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Proration Modal -->
+    <div id="proration-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="portal-glass-panel p-8 max-w-md w-full shadow-2xl transform scale-95 transition-transform duration-300 mx-4">
+            <h3 class="text-xl font-bold text-[var(--color-text-primary)] mb-1">Confirm Plan Update</h3>
+            <p class="text-xs text-[var(--color-text-secondary)] mb-5">You are adjusting your <span id="proration-target-qty" class="text-[var(--color-text-primary)]">--</span>.</p>
+            
+            <div id="proration-loading" class="flex justify-center py-6">
+                <span class="animate-spin material-symbols-outlined text-3xl text-[var(--color-text-secondary)]">progress_activity</span>
+            </div>
+
+            <div id="proration-content" class="hidden space-y-3">
+                <button onclick="triggerUpgradeDowngradeOTP('immediate')" class="w-full text-left p-4 rounded-2xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)] transition-colors group">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-bold text-[var(--color-text-primary)]">Apply Immediately</span>
+                        <span class="material-symbols-outlined text-base text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]">flash_on</span>
+                    </div>
+                    <p class="text-xs text-[var(--color-text-secondary)] leading-relaxed">Pay a prorated amount of <strong id="proration-immediate-amount" class="text-[var(--color-text-primary)]">--</strong> today to apply the changes immediately.</p>
+                </button>
+
+                <button onclick="triggerUpgradeDowngradeOTP('scheduled')" class="w-full text-left p-4 rounded-2xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)] transition-colors group">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-bold text-[var(--color-text-primary)]">Apply Next Cycle</span>
+                        <span class="material-symbols-outlined text-base text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]">schedule</span>
+                    </div>
+                    <p id="proration-scheduled-desc" class="text-xs text-[var(--color-text-secondary)] leading-relaxed">No charge today. On <strong id="proration-next-date" class="text-[var(--color-text-primary)]">--</strong>, your bill will adjust to <strong id="proration-next-amount" class="text-[var(--color-text-primary)]">--</strong>.</p>
+                </button>
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-[var(--color-card-border)] mt-6">
+                <button onclick="closeProrationModal()" class="px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] hover:bg-[var(--color-secondary)] transition-colors">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Downgrade Modal -->
+    <div id="downgrade-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="portal-glass-panel p-8 max-w-lg w-full shadow-2xl transform scale-95 transition-transform duration-300 mx-4">
+            <h3 class="text-xl font-bold text-[var(--color-text-primary)] mb-1 tracking-tight">Downgrade Plan</h3>
+            <p class="text-xs text-[var(--color-text-secondary)] mb-6 font-medium">Select a lower tier option to proceed with.</p>
+            
+            <div id="downgrade-options-container" class="space-y-3"></div>
+
+            <div class="flex justify-end pt-5 border-t border-[var(--color-card-border)] mt-6">
+                <button onclick="closeDowngradeModal()" class="px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] hover:bg-[var(--color-secondary)] transition-colors">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Toast Notifications -->
+    <div class="fixed bottom-6 right-6 z-[200] space-y-3">
+        <p id="portal-error" class="text-red-400 bg-[var(--color-surface)] px-5 py-3.5 rounded-2xl text-xs font-bold shadow-2xl hidden border border-red-500/20"></p>
+        <p id="portal-success" class="text-emerald-400 bg-[var(--color-surface)] px-5 py-3.5 rounded-2xl text-xs font-bold shadow-2xl hidden border border-emerald-500/20"></p>
+    </div>
+
+    <script src="../scripts/script.js"></script>
+    <script>
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+        const apiBaseURL = isLocal ? 'http://localhost:3000' : 'https://sapphire-app.tech';
+
+        const stripe = Stripe('pk_live_51ThK4CPSdch7ZFyc1Ly5vvxjidrYj5gN0Y2Rr5MkIxdsEKkH5seKJvMXZV4ayKgZAl8PXdv2PM7G3spONk6utkuC00JNvByVMA');
+        const elements = stripe.elements();
+
+        let userEmail = '';
+        let sessionToken = ''; 
+        let savedLicenseKey = '';
+        let cardElement = null;
+        let activeCardIndex = 0; 
+        let cachedPortalData = null;
+        let openTicketIssueNumber = null;
+
+        let resendTimer = null;
+        let resendCountdown = 0;
+
+        let pendingQuotaUpdate = null;
+        let pendingProfileUpdate = null;
+        let pendingActionContext = null;
+
+        const errorText = document.getElementById('portal-error');
+        const successText = document.getElementById('portal-success');
+
+        const COUNTRIES_LIST = {
+            "US": "United States (US)", "CA": "Canada (CA)", "GB": "United Kingdom (GB)",
+            "DE": "Germany (DE)", "FR": "France (FR)", "JP": "Japan (JP)", "AU": "Australia (AU)",
+            "IN": "India (IN)", "BR": "Brazil (BR)", "NL": "Netherlands (NL)", "CH": "Switzerland (CH)",
+            "SG": "Singapore (SG)", "NZ": "New Zealand (NZ)", "SE": "Sweden (SE)", "NO": "Norway (NO)",
+            "IE": "Ireland (IE)", "ES": "Spain (ES)", "IT": "Italy (IT)", "BE": "Belgium (BE)",
+            "AT": "Austria (AT)", "DK": "Denmark (DK)", "FI": "Finland (FI)", "MX": "Mexico (MX)",
+            "KR": "South Korea (KR)", "HK": "Hong Kong (HK)", "ZA": "South Africa (ZA)"
+        };
+
+        const CATEGORIES_LIST = {
+            "Bug Report": "Bug Report",
+            "Feature Request": "Feature Request",
+            "Question": "Question"
+        };
+
+        function toggleCustomDropdown(id) {
+            document.querySelectorAll('[id$="-dropdown"]').forEach(el => {
+                if (el.id !== id) el.classList.add('hidden');
+            });
+            document.getElementById(id).classList.toggle('hidden');
+        }
+
+        window.addEventListener('click', (e) => {
+            if (!e.target.closest('[id$="-btn"]') && !e.target.closest('[id$="-dropdown"]')) {
+                document.querySelectorAll('[id$="-dropdown"]').forEach(el => el.classList.add('hidden'));
+            }
+        });
+
+        function setupCustomDropdown(type, list, hiddenInputId, labelId, dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const hiddenInput = document.getElementById(hiddenInputId);
+            const label = document.getElementById(labelId);
+
+            dropdown.innerHTML = '';
+            Object.entries(list).forEach(([val, text]) => {
+                const item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'w-full text-left px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)] focus:outline-none';
+                item.innerHTML = text;
+                item.onclick = () => {
+                    hiddenInput.value = val;
+                    label.textContent = text;
+                    dropdown.classList.add('hidden');
+                    hiddenInput.dispatchEvent(new Event('change'));
+                };
+                dropdown.appendChild(item);
+            });
+        }
+
+        setupCustomDropdown('country', COUNTRIES_LIST, 'billing-country', 'billing-country-label', 'billing-country-dropdown');
+        setupCustomDropdown('category', CATEGORIES_LIST, 'feedback-category-input', 'feedback-category-label', 'feedback-category-dropdown');
+
+        function showError(msg) {
+            errorText.textContent = msg;
+            errorText.classList.remove('hidden');
+            setTimeout(() => errorText.classList.add('hidden'), 5000);
+        }
+
+        function showSuccess(msg) {
+            successText.textContent = msg;
+            successText.classList.remove('hidden');
+            setTimeout(() => successText.classList.add('hidden'), 5000);
+        }
+
+        function copyLicenseKey() {
+            if (!savedLicenseKey) return;
+            navigator.clipboard.writeText(savedLicenseKey).then(() => {
+                showSuccess("License key copied to clipboard.");
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const savedEmail = localStorage.getItem('sapphire-logged-in-email');
+            const savedToken = localStorage.getItem('sapphire-session-token');
+
+            if (savedEmail && savedToken) {
+                userEmail = savedEmail;
+                sessionToken = savedToken;
+
+                document.getElementById('dashboard-container').classList.remove('hidden');
+
+                try {
+                    const response = await fetch(`${apiBaseURL}/get-dashboard-data`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: userEmail, sessionToken: sessionToken })
+                    });
+
+                    if (response.status === 401) {
+                        throw new Error("unauthorized");
+                    }
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        savedLicenseKey = data.licenseKey;
+                        renderDashboard(data);
+                        initPortalStripeCard();
+                        startPortalAutoSync();
+                    }
+                } catch (err) {
+                    if (err.message === "unauthorized") {
+                        logoutPortal();
+                    } else {
+                        showError("Connecting with secure servers...");
+                    }
+                }
+            } else {
+                document.getElementById('login-container').style.display = 'block';
+            }
+        });
+
+        // --- GENERALIZED ACTION 2FA (OTP) ---
+        async function requestActionOTP(actionType, modeOrData) {
+            const btn = document.activeElement;
+            if (btn) {
+                btn.disabled = true;
+                btn.dataset.originalHtml = btn.innerHTML;
+                btn.innerHTML = '<span class="animate-spin material-symbols-outlined text-[12px]">progress_activity</span>';
+            }
+
+            try {
+                const response = await fetch(`${apiBaseURL}/send-action-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, sessionToken: sessionToken, intent: actionType.replace('-', ' ') })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || "Failed to dispatch verification code.");
+
+                pendingActionContext = { type: actionType, data: modeOrData };
+                
+                const prorationModal = document.getElementById('proration-modal');
+                if (!prorationModal.classList.contains('hidden')) closeProrationModal();
+
+                const downgradeModal = document.getElementById('downgrade-modal');
+                if (!downgradeModal.classList.contains('hidden')) closeDowngradeModal();
+
+                const otpModal = document.getElementById('action-otp-modal');
+                const otpModalInner = otpModal.querySelector('div');
+                document.getElementById('action-verify-code').value = '';
+                document.getElementById('action-otp-error').classList.add('hidden');
+                
+                otpModal.classList.remove('hidden');
+                void otpModal.offsetWidth;
+                otpModal.classList.remove('opacity-0');
+                otpModalInner.classList.remove('scale-95');
+
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                if (btn && btn.dataset.originalHtml) {
+                    btn.disabled = false;
+                    btn.innerHTML = btn.dataset.originalHtml;
+                }
+            }
+        }
+
+        function cancelActionOTP() {
+            const modal = document.getElementById('action-otp-modal');
+            const modalInner = modal.querySelector('div');
+            
+            modal.classList.add('opacity-0');
+            modalInner.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+            pendingActionContext = null;
+        }
+
+        async function confirmActionOTP() {
+            if (!pendingActionContext) return;
+            const btn = document.getElementById('confirm-action-btn');
+            const errDiv = document.getElementById('action-otp-error');
+            const codeInput = document.getElementById('action-verify-code').value;
+
+            btn.disabled = true;
+            btn.textContent = "Verifying...";
+            errDiv.classList.add('hidden');
+
+            try {
+                if (pendingActionContext.type === 'update-quota') {
+                    const applyMode = pendingActionContext.data;
+                    const { subscriptionId, itemId, targetQty } = pendingQuotaUpdate;
+
+                    const response = await fetch(`${apiBaseURL}/update-devices`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            email: userEmail, sessionToken, 
+                            subscriptionId, subscriptionItemId: itemId, 
+                            quantity: targetQty, applyMode, otpCode: codeInput 
+                        })
+                    });
+                    const resData = await response.json();
+                    if (!response.ok) throw new Error(resData.message || 'Update failed.');
+
+                    showSuccess(applyMode === 'immediate' ? "Device limit updated immediately." : "Device limit update scheduled.");
+
+                } else if (pendingActionContext.type === 'cancel-subscription') {
+                    const subId = pendingActionContext.data;
+                    const response = await fetch(`${apiBaseURL}/cancel-subscription`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: userEmail, sessionToken, subscriptionId: subId, otpCode: codeInput })
+                    });
+                    const resData = await response.json();
+                    if (!response.ok) throw new Error(resData.message || 'Cancellation failed.');
+                    showSuccess("Subscription cancelled.");
+
+                } else if (pendingActionContext.type === 'upgrade-plan') {
+                    const applyMode = pendingActionContext.data;
+                    const { subscriptionId, itemId, newPlan } = pendingQuotaUpdate;
+
+                    const response = await fetch(`${apiBaseURL}/upgrade-plan`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            email: userEmail, sessionToken, 
+                            subscriptionId, subscriptionItemId: itemId, 
+                            newPlan, applyMode, otpCode: codeInput 
+                        })
+                    });
+                    const resData = await response.json();
+                    if (!response.ok) throw new Error(resData.message || 'Plan update failed.');
+                    showSuccess(`Successfully switched plan to ${newPlan.toUpperCase()}.`);
+                }
+
+                const modal = document.getElementById('action-otp-modal');
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+                
+                setTimeout(refreshDashboard, 1500);
+            } catch (err) {
+                errDiv.textContent = err.message;
+                errDiv.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Confirm";
+            }
+        }
+
+        // --- PROFILE EDITING ---
+        function openProfileModal() {
+            const modal = document.getElementById('profile-edit-modal');
+            const modalInner = modal.querySelector('div');
+            
+            document.getElementById('edit-profile-name').value = cachedPortalData?.customerName || '';
+            document.getElementById('edit-profile-email').value = userEmail || '';
+            document.getElementById('edit-profile-error').classList.add('hidden');
+
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            modalInner.classList.remove('scale-95');
+        }
+
+        function closeProfileModal() {
+            const modal = document.getElementById('profile-edit-modal');
+            const modalInner = modal.querySelector('div');
+            
+            modal.classList.add('opacity-0');
+            modalInner.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        async function submitProfileUpdate() {
+            const btn = document.getElementById('save-profile-btn');
+            const errDiv = document.getElementById('edit-profile-error');
+            const newName = document.getElementById('edit-profile-name').value.trim();
+            const newEmail = document.getElementById('edit-profile-email').value.trim();
+
+            if(!newEmail) {
+                errDiv.textContent = "Email cannot be empty.";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Processing...";
+            errDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${apiBaseURL}/send-profile-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, sessionToken: sessionToken })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || "Failed to dispatch verification code.");
+
+                pendingProfileUpdate = { newName, newEmail };
+                
+                closeProfileModal();
+                
+                const otpModal = document.getElementById('profile-otp-modal');
+                const otpModalInner = otpModal.querySelector('div');
+                document.getElementById('profile-verify-code').value = '';
+                document.getElementById('profile-otp-error').classList.add('hidden');
+                
+                otpModal.classList.remove('hidden');
+                void otpModal.offsetWidth;
+                otpModal.classList.remove('opacity-0');
+                otpModalInner.classList.remove('scale-95');
+
+            } catch (err) {
+                errDiv.textContent = err.message;
+                errDiv.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Save";
+            }
+        }
+
+        function cancelProfileOTP() {
+            const modal = document.getElementById('profile-otp-modal');
+            const modalInner = modal.querySelector('div');
+            
+            modal.classList.add('opacity-0');
+            modalInner.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                openProfileModal();
+            }, 300);
+            pendingProfileUpdate = null;
+        }
+
+        async function confirmProfileOTP() {
+            if (!pendingProfileUpdate) return;
+            const btn = document.getElementById('confirm-profile-btn');
+            const errDiv = document.getElementById('profile-otp-error');
+            const codeInput = document.getElementById('profile-verify-code').value;
+
+            btn.disabled = true;
+            btn.textContent = "Verifying...";
+            errDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${apiBaseURL}/update-profile`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email: userEmail, 
+                        sessionToken: sessionToken, 
+                        newName: pendingProfileUpdate.newName, 
+                        newEmail: pendingProfileUpdate.newEmail,
+                        otpCode: codeInput
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || "Verification failed.");
+
+                if (data.email !== userEmail) {
+                    userEmail = data.email;
+                    localStorage.setItem('sapphire-logged-in-email', userEmail);
+                }
+
+                showSuccess("Profile updated.");
+                
+                const modal = document.getElementById('profile-otp-modal');
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+                
+                refreshDashboard();
+            } catch (err) {
+                errDiv.textContent = err.message;
+                errDiv.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Verify & Save";
+            }
+        }
+
+        function showRegister() {
+            document.getElementById('otp-request-state').classList.add('hidden');
+            document.getElementById('otp-verify-state').classList.add('hidden');
+            document.getElementById('register-free-state').classList.remove('hidden');
+        }
+
+        function showLogin() {
+            document.getElementById('register-free-state').classList.add('hidden');
+            document.getElementById('otp-verify-state').classList.add('hidden');
+            document.getElementById('otp-request-state').classList.remove('hidden');
+        }
+
+        function startResendCountdown() {
+            const resendBtn = document.getElementById('resend-otp-btn');
+            const timerLabel = document.getElementById('resend-timer-label');
+            if (!resendBtn) return;
+
+            resendBtn.disabled = true;
+            resendCountdown = 30;
+            timerLabel.textContent = `(${resendCountdown}s)`;
+
+            clearInterval(resendTimer);
+            resendTimer = setInterval(() => {
+                resendCountdown--;
+                if (resendCountdown <= 0) {
+                    clearInterval(resendTimer);
+                    resendBtn.disabled = false;
+                    timerLabel.textContent = '';
+                } else {
+                    timerLabel.textContent = `(${resendCountdown}s)`;
+                }
+            }, 1000);
+        }
+
+        async function resendVerificationCode() {
+            if (resendCountdown > 0) return;
+            const resendBtn = document.getElementById('resend-otp-btn');
+            resendBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${apiBaseURL}/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Resend failed.');
+
+                showSuccess("A new verification code has been dispatched.");
+                startResendCountdown();
+            } catch (err) {
+                showError(err.message);
+                resendBtn.disabled = false;
+            }
+        }
+
+        document.getElementById('register-free-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('reg-submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = 'Processing...';
+            
+            const email = document.getElementById('reg-email').value;
+            const name = document.getElementById('reg-name').value;
+
+            try {
+                const regRes = await fetch(`${apiBaseURL}/register-free-customer`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, name })
+                });
+                const regData = await regRes.json();
+                if (!regRes.ok) throw new Error(regData.message || 'Registration failed.');
+
+                showSuccess("Account created. Sending authorization code...");
+
+                userEmail = email; 
+                const otpRes = await fetch(`${apiBaseURL}/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail })
+                });
+                const otpData = await otpRes.json();
+                if (!otpRes.ok) throw new Error(otpData.message || 'OTP delivery failed.');
+
+                document.getElementById('register-free-state').classList.add('hidden');
+                document.getElementById('otp-verify-state').classList.remove('hidden');
+                document.getElementById('verify-email-text').textContent = `Enter the 6-digit code sent to ${userEmail}.`;
+                document.getElementById('verify-code').focus();
+                startResendCountdown();
+
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Create Free Account';
+            }
+        });
+
+        document.getElementById('otp-request-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('request-submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = 'Processing...';
+            userEmail = document.getElementById('request-email').value;
+
+            try {
+                const response = await fetch(`${apiBaseURL}/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'OTP delivery failed.');
+
+                showSuccess("Verification code sent to your inbox.");
+                document.getElementById('otp-request-state').classList.add('hidden');
+                document.getElementById('otp-verify-state').classList.remove('hidden');
+                document.getElementById('verify-email-text').textContent = `Enter the 6-digit code sent to ${userEmail}.`;
+                document.getElementById('verify-code').focus();
+                startResendCountdown();
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Continue';
+            }
+        });
+
+        document.getElementById('otp-verify-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('verify-submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = 'Processing...';
+            const codeInput = document.getElementById('verify-code').value;
+
+            try {
+                const response = await fetch(`${apiBaseURL}/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, otpCode: codeInput })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Verification failed.');
+
+                sessionToken = data.sessionToken;
+
+                localStorage.setItem('sapphire-logged-in-email', userEmail);
+                localStorage.setItem('sapphire-session-token', sessionToken);
+
+                const dashResponse = await fetch(`${apiBaseURL}/get-dashboard-data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, sessionToken: sessionToken })
+                });
+                
+                const dashData = await dashResponse.json();
+                if (!dashResponse.ok) throw new Error(dashData.message || 'Unable to sync dashboard.');
+
+                savedLicenseKey = dashData.licenseKey;
+
+                renderDashboard(dashData);
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('dashboard-container').classList.remove('hidden');
+                initPortalStripeCard();
+
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Unlock Dashboard';
+            }
+        });
+
+        function logoutPortal() {
+            localStorage.removeItem('sapphire-logged-in-email');
+            localStorage.removeItem('sapphire-session-token');
+            window.location.reload();
+        }
+
+        // --- DOWNGRADE PLAN MODAL ---
+        function openDowngradeModal(currentPlan, subscriptionId, subscriptionItemId) {
+            const modal = document.getElementById('downgrade-modal');
+            const modalInner = modal.querySelector('div');
+            const container = document.getElementById('downgrade-options-container');
+            
+            container.innerHTML = '';
+            
+            const plans = [
+                { id: 'basic', name: 'Basic', price: '$15.99/mo', desc: 'Core features. No Circle to Search or Live Widgets.' },
+                { id: 'pro', name: 'Pro', price: '$25.99/mo', desc: 'Adds Circle to Search and Live Sports. No Priority Support.' }
+            ];
+
+            let foundDowngrade = false;
+
+            plans.forEach(p => {
+                if (currentPlan === 'ultra' || (currentPlan === 'pro' && p.id === 'basic')) {
+                    foundDowngrade = true;
+                    container.innerHTML += `
+                        <button onclick="initPlanUpdate('${subscriptionId}', '${subscriptionItemId}', '${p.id}', this)" class="w-full text-left p-4 rounded-2xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)] transition-colors group">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-sm font-bold text-[var(--color-text-primary)]">${p.name} - ${p.price}</span>
+                                <span class="material-symbols-outlined text-base text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]">south</span>
+                            </div>
+                            <p class="text-xs text-[var(--color-text-secondary)] leading-relaxed">${p.desc}</p>
+                        </button>
+                    `;
+                }
+            });
+
+            if (!foundDowngrade) {
+                container.innerHTML = `<p class="text-xs font-medium text-[var(--color-text-secondary)] text-center py-4 bg-[var(--color-secondary)] rounded-xl">You are currently on the lowest available paid tier.</p>`;
+            }
+
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            modalInner.classList.remove('scale-95');
+        }
+
+        function closeDowngradeModal() {
+            const modal = document.getElementById('downgrade-modal');
+            const modalInner = modal.querySelector('div');
+            modal.classList.add('opacity-0');
+            modalInner.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function renderDashboard(data) {
+            cachedPortalData = data; 
+            document.getElementById('user-email-display').textContent = userEmail;
+            document.getElementById('user-name-display').textContent = data.customerName || 'My Account';
+            document.getElementById('display-license-key').textContent = savedLicenseKey;
+
+            const subContainer = document.getElementById('subscriptions-list-container');
+            const dangerZone = document.getElementById('billing-danger-zone');
+            
+            subContainer.innerHTML = '';
+            
+            if (data.subscriptions.length === 0) {
+                subContainer.innerHTML = `
+                    <div class="p-6 md:p-8 rounded-2xl bg-[var(--color-secondary)] flex flex-col items-center justify-center text-center space-y-3">
+                        <div class="w-10 h-10 bg-[var(--color-card-bg)] rounded-full flex items-center justify-center text-[var(--color-text-primary)]">
+                            <span class="material-symbols-outlined text-xl">workspace_premium</span>
+                        </div>
+                        <div>
+                            <h4 class="text-[var(--color-text-primary)] font-bold text-base tracking-tight">Free Tier Active</h4>
+                            <p class="text-xs text-[var(--color-text-secondary)] font-medium mt-1 max-w-sm mx-auto">Upgrade to unlock Blip Agent automation, Blip Live, and high-frequency widgets.</p>
+                        </div>
+                        <a href="/subscribe" class="bg-[var(--color-text-primary)] text-[var(--color-background)] font-bold px-6 py-2.5 rounded-full text-[10px] tracking-wider uppercase hover:opacity-90 transition-opacity mt-2 inline-block">
+                            View Upgrades
+                        </a>
+                    </div>`;
+                dangerZone.classList.add('hidden');
+            } else {
+                data.subscriptions.forEach(sub => {
+                    const devices = data.registeredDevices || [];
+                    const deviceCount = devices.length;
+                    const seatFraction = `${deviceCount} / ${sub.quantity}`;
+                    const seatFull = deviceCount >= sub.quantity;
+
+                    let trialHtml = '';
+                    if (sub.trialDaysLeft !== null) {
+                        trialHtml = `<span class="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-500 font-bold text-[9px] uppercase tracking-wider ml-2 whitespace-nowrap">${sub.trialDaysLeft} Days Left in Trial</span>`;
+                    }
+                    
+                    let promosHtml = '';
+                    if (sub.plan === 'basic' || sub.plan === 'pro') {
+                        const isBasic = sub.plan === 'basic';
+                        promosHtml = `
+                            <div class="mt-8 pt-6 border-t border-[var(--color-card-border)]">
+                                <h4 class="text-[10px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider mb-4">Level Up Your Tier</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    ${isBasic ? `
+                                    <div class="bg-[var(--color-secondary)] p-5 rounded-2xl flex flex-col justify-between hover:bg-[var(--color-secondary-hover)] transition-colors">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <h5 class="text-sm font-bold text-[var(--color-text-primary)]">Sapphire Pro</h5>
+                                                <span class="text-xs font-bold text-[var(--color-text-secondary)]">+$10.00/mo</span>
+                                            </div>
+                                            <p class="text-xs text-[var(--color-text-secondary)] leading-relaxed mb-4">Adds Circle to Search and Live Sports widgets instantly.</p>
+                                        </div>
+                                        <button onclick="initPlanUpdate('${sub.subscriptionId}', '${sub.subscriptionItemId}', 'pro', this)" class="w-full bg-[var(--color-text-primary)] text-[var(--color-background)] font-bold py-2.5 rounded-xl text-[9px] uppercase tracking-wider transition-transform active:scale-98">Upgrade to Pro</button>
+                                    </div>
+                                    ` : ''}
+                                    <div class="bg-[var(--color-secondary)] p-5 rounded-2xl flex flex-col justify-between hover:bg-[var(--color-secondary-hover)] transition-colors ${isBasic ? '' : 'md:col-span-2'}">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <h5 class="text-sm font-bold text-[var(--color-text-primary)]">Sapphire Ultra</h5>
+                                                <span class="text-xs font-bold text-[var(--color-text-secondary)]">${isBasic ? '+$15.00/mo' : '+$5.00/mo'}</span>
+                                            </div>
+                                            <p class="text-xs text-[var(--color-text-secondary)] leading-relaxed mb-4">Priority Support, Finance Widgets & Everything in Pro.</p>
+                                        </div>
+                                        <button onclick="initPlanUpdate('${sub.subscriptionId}', '${sub.subscriptionItemId}', 'ultra', this)" class="w-full bg-[var(--color-text-primary)] text-[var(--color-background)] font-bold py-2.5 rounded-xl text-[9px] uppercase tracking-wider transition-transform active:scale-98">Upgrade to Ultra</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    const box = document.createElement('div');
+                    box.className = 'bg-[var(--color-secondary)] p-6 md:p-8 rounded-2xl relative overflow-hidden';
+                    box.innerHTML = `
+                        <div class="flex flex-col xl:flex-row xl:items-start justify-between gap-6 relative z-10">
+                            
+                            <!-- Left: Plan Information -->
+                            <div class="space-y-2 flex-1">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-[var(--color-card-bg)] text-[var(--color-text-primary)] flex items-center justify-center shrink-0">
+                                        <span class="material-symbols-outlined text-xl">workspace_premium</span>
+                                    </div>
+                                    <div class="flex flex-col w-full min-w-0">
+                                        <h3 class="font-bold text-xl text-[var(--color-text-primary)] tracking-tight">Sapphire ${sub.plan.charAt(0).toUpperCase() + sub.plan.slice(1)}</h3>
+                                        <p class="text-[9px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider mt-0.5 flex flex-wrap items-center">
+                                            License Active ${trialHtml}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 flex-wrap xl:pl-[56px] pt-1">
+                                    <div class="inline-flex items-center gap-1.5 text-[9px] font-bold text-emerald-400 bg-[var(--color-card-bg)] px-3 py-1 rounded-md uppercase tracking-wider">
+                                        <span class="material-symbols-outlined text-[10px]">check_circle</span> Active
+                                    </div>
+                                    <div class="inline-flex items-center gap-1.5 text-[9px] font-bold ${seatFull ? 'text-amber-400' : 'text-cyan-400'} bg-[var(--color-card-bg)] px-3 py-1 rounded-md uppercase tracking-wider">
+                                        <span class="material-symbols-outlined text-[10px]">${seatFull ? 'warning' : 'devices'}</span> ${seatFraction} Seats
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right: Next Payment & Seat Controls -->
+                            <div class="flex flex-col sm:flex-row sm:items-start gap-6 xl:gap-8 xl:shrink-0 mt-2 xl:mt-0">
+                                
+                                <div class="text-left xl:text-right">
+                                    <p class="text-[9px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider mb-0.5">Next Payment</p>
+                                    <p class="text-2xl font-bold text-[var(--color-text-primary)] tracking-tight">${sub.nextPaymentAmount || sub.priceFormatted}</p>
+                                    <p class="text-[9px] text-[var(--color-text-secondary)] font-bold uppercase tracking-wider mt-1">
+                                        Renews ${sub.nextBillingDate}
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-col gap-2 min-w-[130px] items-center">
+                                    <div class="flex items-center gap-3 bg-[var(--color-card-bg)] px-3 py-1.5 rounded-full border border-[var(--color-card-border)]">
+                                        <button onclick="changePortalQty(this, -1)" class="w-7 h-7 rounded-full bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)] flex items-center justify-center text-[var(--color-text-primary)] transition-colors font-bold"><span class="material-symbols-outlined text-sm">remove</span></button>
+                                        <span class="w-6 text-center font-bold text-sm text-[var(--color-text-primary)] outline-none portal-dynamic-qty-span">${sub.quantity}</span>
+                                        <input type="hidden" value="${sub.quantity}" class="portal-dynamic-qty" />
+                                        <button onclick="changePortalQty(this, 1)" class="w-7 h-7 rounded-full bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)] flex items-center justify-center text-[var(--color-text-primary)] transition-colors font-bold"><span class="material-symbols-outlined text-sm">add</span></button>
+                                    </div>
+                                    <div class="flex items-center gap-2 w-full">
+                                        <button onclick="initQuotaUpdate('${sub.subscriptionId}', '${sub.subscriptionItemId}', ${sub.quantity}, this)" class="flex-1 bg-[var(--color-text-primary)] text-[var(--color-background)] font-bold py-2 px-4 rounded-full text-[9px] tracking-wider uppercase transition-transform active:scale-98">Save</button>
+                                        <button onclick="requestActionOTP('cancel-subscription', '${sub.subscriptionId}')" class="w-8 h-8 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full transition-colors flex items-center justify-center shrink-0" title="Cancel Subscription">
+                                            <span class="material-symbols-outlined text-sm">cancel</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        
+                        ${promosHtml}
+                    `;
+                    subContainer.appendChild(box);
+
+                    const isBasic = sub.plan === 'basic';
+                    dangerZone.classList.remove('hidden');
+                    dangerZone.innerHTML = `
+                        <div class="bg-red-500/5 border border-red-500/10 p-6 md:p-8 rounded-2xl">
+                            <h3 class="text-base font-bold text-[var(--color-text-primary)] tracking-tight">Subscription Management</h3>
+                            <p class="text-xs text-[var(--color-text-secondary)] font-medium mt-1 mb-5">Modify your plan tier or terminate your subscription. Changes take effect at the end of the current billing cycle.</p>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                ${!isBasic ? `
+                                <button onclick="openDowngradeModal('${sub.plan}', '${sub.subscriptionId}', '${sub.subscriptionItemId}')" class="px-5 py-2.5 rounded-xl font-bold uppercase tracking-wider text-[9px] bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)] text-[var(--color-text-primary)] transition-colors">Downgrade Plan</button>
+                                ` : ''}
+                                <button onclick="requestActionOTP('cancel-subscription', '${sub.subscriptionId}')" class="px-5 py-2.5 rounded-xl font-bold uppercase tracking-wider text-[9px] bg-red-500/10 hover:bg-red-500/20 text-red-500 transition-colors">Cancel Subscription</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            renderVisualWallet();
+
+            let isUltraSubscriber = false;
+            if (data.subscriptions && data.subscriptions.length > 0) {
+                isUltraSubscriber = data.subscriptions.some(sub => sub.plan === 'ultra');
+            }
+
+            const lockBadge = document.getElementById('feedback-lock-badge');
+            const lockedState = document.getElementById('feedback-locked-state');
+            const ticketListView = document.getElementById('ticket-list-view');
+            const composerFormView = document.getElementById('ticket-composer-view');
+            const threadView = document.getElementById('feedback-thread-view');
+            const btnNewTicket = document.getElementById('btn-new-ticket');
+
+            lockedState.classList.add('hidden');
+            ticketListView.classList.add('hidden');
+            composerFormView.classList.add('hidden');
+            threadView.classList.add('hidden');
+            btnNewTicket.classList.add('hidden');
+            lockBadge.classList.add('hidden');
+
+            if (!isUltraSubscriber) {
+                lockBadge.classList.remove('hidden');
+                lockedState.classList.remove('hidden');
+            } else {
+                const tickets = data.feedbackTickets || [];
+                const openTicketsCount = tickets.filter(t => t.state === 'open').length;
+                
+                document.getElementById('open-tickets-count').textContent = openTicketsCount;
+
+                if (openTicketsCount < 5) {
+                    btnNewTicket.classList.remove('hidden');
+                }
+
+                if (tickets.length === 0) {
+                    ticketListView.classList.remove('hidden');
+                    const listContainer = document.getElementById('ticket-list-container');
+                    listContainer.innerHTML = `
+                        <div class="p-8 text-center text-xs font-medium text-[var(--color-text-secondary)] bg-[var(--color-secondary)] rounded-2xl">
+                            No tickets created yet. Welcome to Priority Support.
+                        </div>
+                    `;
+                } else {
+                    ticketListView.classList.remove('hidden');
+                    const listContainer = document.getElementById('ticket-list-container');
+                    listContainer.innerHTML = '';
+                    
+                    tickets.forEach((ticket, idx) => {
+                        const isOpen = ticket.state === 'open';
+                        const iconColor = isOpen ? 'text-emerald-400' : 'text-purple-400';
+                        const iconType = isOpen ? 'adjust' : 'check_circle';
+                        
+                        const el = document.createElement('div');
+                        el.className = 'p-4 flex justify-between items-start bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)] transition-colors rounded-xl mb-2 cursor-pointer';
+                        el.onclick = (e) => showTicketDetail(idx, e);
+                        el.innerHTML = `
+                            <div class="flex gap-3">
+                                <span class="material-symbols-outlined text-base ${iconColor} mt-0.5 shrink-0">${iconType}</span>
+                                <div>
+                                    <span class="font-bold text-sm text-[var(--color-text-primary)]">${escapeHtml(ticket.title)}</span>
+                                    <p class="text-xs font-medium text-[var(--color-text-secondary)] mt-0.5">#${ticket.issueNumber} opened on ${ticket.created}</p>
+                                </div>
+                            </div>
+                            ${ticket.commentsCount > 0 ? `
+                            <span class="text-xs text-[var(--color-text-secondary)] flex items-center gap-1 shrink-0 ml-2 font-medium bg-[var(--color-card-bg)] px-2 py-0.5 rounded-md">
+                                <span class="material-symbols-outlined text-[13px]">chat_bubble</span> ${ticket.commentsCount}
+                            </span>` : ''}
+                        `;
+                        listContainer.appendChild(el);
+                    });
+                }
+            }
+
+            const billingDisplay = document.getElementById('billing-info-display');
+            if (data.customerAddress && data.customerAddress.line1) {
+                billingDisplay.innerHTML = `
+                    <div class="space-y-1">
+                        <p class="font-bold text-[var(--color-text-primary)]">${data.customerAddress.line1}</p>
+                        <p class="text-[var(--color-text-secondary)] text-xs">${data.customerAddress.city || ''}, ${data.customerAddress.state || ''} ${data.customerAddress.postal_code || ''}</p>
+                        <p class="text-[9px] uppercase font-bold tracking-wider pt-1 text-[var(--color-text-secondary)]">${data.customerAddress.country || ''}</p>
+                    </div>
+                `;
+            } else {
+                billingDisplay.innerHTML = '<p class="text-[var(--color-text-secondary)] font-medium italic text-xs">No billing address on file.</p>';
+            }
+
+            if (data.customerAddress) {
+                document.getElementById('billing-address').value = data.customerAddress.line1 || '';
+                document.getElementById('billing-city').value = data.customerAddress.city || '';
+                document.getElementById('billing-state').value = data.customerAddress.state || '';
+                document.getElementById('postal-code').value = data.customerAddress.postal_code || '';
+                
+                const countryVal = data.customerAddress.country || 'US';
+                document.getElementById('billing-country').value = countryVal;
+                document.getElementById('billing-country-label').textContent = COUNTRIES_LIST[countryVal] || countryVal;
+            }
+
+            const devicesContainer = document.getElementById('devices-container');
+            devicesContainer.innerHTML = '';
+            const devices = data.registeredDevices || [];
+            if (devices.length === 0) {
+                devicesContainer.innerHTML = `<p class="col-span-full text-center text-xs font-medium text-[var(--color-text-secondary)] py-6 bg-[var(--color-secondary)] rounded-2xl">No devices registered yet. Activate Sapphire on your Mac to register this terminal.</p>`;
+            } else {
+                const deviceList = document.createElement('div');
+                deviceList.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4 w-full col-span-full';
+                devices.forEach(device => {
+                    const d = document.createElement('div');
+                    d.className = 'flex flex-col p-5 rounded-2xl bg-[var(--color-secondary)]';
+                    const regDate = device.registeredAt ? new Date(device.registeredAt * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown';
+                    d.innerHTML = `
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-9 h-9 rounded-full bg-[var(--color-card-bg)] flex items-center justify-center text-[var(--color-text-primary)]">
+                                <span class="material-symbols-outlined text-lg">laptop_mac</span>
+                            </div>
+                            <button onclick="portalDeregisterDevice('${escapeHtml(device.id)}')" class="text-[9px] font-bold uppercase tracking-wider text-red-500 hover:text-white hover:bg-red-500 px-3 py-1 rounded-lg transition-colors border border-red-500/20" title="Revoke Device">
+                                Revoke
+                            </button>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-[var(--color-text-primary)] truncate tracking-tight" title="${escapeHtml(device.name)}">${escapeHtml(device.name)}</p>
+                            <p class="text-[10px] font-medium text-[var(--color-text-secondary)] mt-0.5">Added ${regDate}</p>
+                        </div>
+                    `;
+                    deviceList.appendChild(d);
+                });                devicesContainer.appendChild(deviceList);
+            }
+
+            // Render revoked devices section
+            const revokedSection = document.getElementById('revoked-devices-section');
+            const revokedContainer = document.getElementById('revoked-devices-container');
+            if (revokedContainer) {
+                revokedContainer.innerHTML = '';
+                const revokedDevices = data.revokedDevices || [];
+                if (revokedSection) revokedSection.style.display = revokedDevices.length > 0 ? '' : 'none';
+                if (revokedDevices.length > 0) {
+                    const revokedList = document.createElement('div');
+                    revokedList.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4 w-full col-span-full';
+                    revokedDevices.forEach(deviceId => {
+                        const d = document.createElement('div');
+                        d.className = 'flex flex-col p-5 rounded-2xl bg-[var(--color-secondary)] opacity-60';
+                        d.innerHTML = `
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="w-9 h-9 rounded-full bg-red-500/10 flex items-center justify-center text-red-400">
+                                    <span class="material-symbols-outlined text-lg">block</span>
+                                </div>
+                                <button onclick="portalDeleteRevokedDevice('${escapeHtml(deviceId)}')" class="text-[9px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] hover:text-white hover:bg-[var(--color-text-secondary)] px-3 py-1 rounded-lg transition-colors border border-[var(--color-card-border)]" title="Remove from list">
+                                    Delete
+                                </button>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-mono text-[var(--color-text-secondary)] truncate" title="${escapeHtml(deviceId)}">${escapeHtml(deviceId)}</p>
+                                <p class="text-[10px] font-medium text-[var(--color-text-secondary)] mt-0.5">Revoked</p>
+                            </div>
+                        `;
+                        revokedList.appendChild(d);
+                    });
+                    revokedContainer.appendChild(revokedList);
+                }
+            }
+
+            const invoiceContainer = document.getElementById('invoice-history-container');
+            invoiceContainer.innerHTML = '';
+            if (data.invoices.length === 0) {
+                invoiceContainer.innerHTML = `<p class="text-center text-xs font-medium text-[var(--color-text-secondary)] py-6 bg-[var(--color-secondary)] rounded-2xl">No invoice history found.</p>`;
+            } else {
+                data.invoices.forEach(inv => {
+                    const item = document.createElement('div');
+                    item.className = 'flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)] transition-colors gap-3';
+                    item.innerHTML = `
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-8 h-8 rounded-full bg-[var(--color-card-bg)] flex items-center justify-center text-[var(--color-text-secondary)] shrink-0">
+                                <span class="material-symbols-outlined text-[16px]">receipt_long</span>
+                            </div>
+                            <div>
+                                <p class="font-bold text-xs text-[var(--color-text-primary)] tracking-tight">${inv.date}</p>
+                                <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+                                    <span class="text-[10px] font-medium text-[var(--color-text-secondary)]">${inv.product}</span>
+                                    <span class="px-1.5 py-0.2 rounded text-emerald-400 bg-emerald-400/10 text-[8px] font-bold uppercase tracking-wider">${inv.status}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between sm:justify-end gap-3 sm:w-auto w-full pt-1.5 sm:pt-0">
+                            <p class="font-bold text-sm text-[var(--color-text-primary)] tracking-tight">${inv.amount}</p>
+                            <a href="${inv.pdf}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-lg bg-[var(--color-card-bg)] flex items-center justify-center text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors" title="Download Invoice">
+                                <span class="material-symbols-outlined text-[15px]">download</span>
+                            </a>
+                        </div>
+                    `;
+                    invoiceContainer.appendChild(item);
+                });
+            }
+        }
+
+        function renderVisualWallet() {
+            const data = cachedPortalData;
+            const pmSwitcher = document.getElementById('pm-switcher');
+            const pmCardPreview = document.getElementById('pm-card-preview');
+            const pmCardActions = document.getElementById('pm-card-actions');
+
+            pmSwitcher.innerHTML = '';
+            pmCardPreview.innerHTML = '';
+            pmCardActions.innerHTML = '';
+
+            if (data.paymentMethods.length === 0) {
+                pmSwitcher.classList.add('hidden');
+                pmCardActions.classList.add('hidden');
+                pmCardPreview.className = "w-full bg-[var(--color-secondary)] p-6 rounded-2xl text-center text-xs font-medium text-[var(--color-text-secondary)]";
+                pmCardPreview.innerHTML = "No credit cards saved on file.";
+                return;
+            }
+
+            pmSwitcher.classList.remove('hidden');
+            pmCardActions.classList.remove('hidden');
+
+            data.paymentMethods.forEach((pm, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `px-3.5 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider whitespace-nowrap transition-colors ${
+                    idx === activeCardIndex 
+                        ? 'bg-[var(--color-text-primary)] text-[var(--color-background)]' 
+                        : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                }`;
+                btn.innerHTML = `${pm.brand} •••• ${pm.last4}`;
+                btn.onclick = () => {
+                    activeCardIndex = idx;
+                    renderVisualWallet();
+                };
+                pmSwitcher.appendChild(btn);
+            });
+
+            const activePm = data.paymentMethods[activeCardIndex];
+            const brand = activePm.brand.toLowerCase();
+
+            let cardBg = "bg-neutral-900";
+            if (brand === 'visa') cardBg = "bg-slate-900";
+            else if (brand === 'mastercard') cardBg = "bg-stone-900";
+
+            pmCardPreview.className = `relative aspect-[1.586/1] w-full max-w-[280px] rounded-2xl p-5 flex flex-col justify-between ${cardBg} text-white font-sans mx-auto border border-white/10`;
+            pmCardPreview.innerHTML = `
+                <div class="flex justify-between items-start w-full">
+                    <span class="font-mono text-xs text-white/50 uppercase tracking-widest font-bold">${activePm.brand}</span>
+                    <span class="material-symbols-outlined text-white/40 text-base">contactless</span>
+                </div>
+
+                <div class="text-base font-mono tracking-[0.18em] text-white text-center py-2 select-all whitespace-nowrap">
+                    •••• •••• •••• ${activePm.last4}
+                </div>
+
+                <div class="flex justify-between items-end w-full text-[9px] uppercase tracking-wider font-semibold text-white/70">
+                    <div>${data.customerName || userEmail.split('@')[0].toUpperCase()}</div>
+                    <div class="font-mono">${activePm.expMonth.toString().padStart(2, '0')}/${activePm.expYear.toString().slice(-2)}</div>
+                </div>
+            `;
+
+            if (!activePm.isDefault) {
+                const defaultBtn = document.createElement('button');
+                defaultBtn.className = "px-3.5 py-1.5 bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] rounded-lg text-[9px] font-bold uppercase tracking-wider transition-colors";
+                defaultBtn.textContent = "Set Default";
+                defaultBtn.onclick = () => setDefaultCard(activePm.id);
+                pmCardActions.appendChild(defaultBtn);
+            } else {
+                const defaultLabel = document.createElement('span');
+                defaultLabel.className = "px-3.5 py-1.5 bg-[var(--color-text-primary)] text-[var(--color-background)] rounded-lg text-[9px] font-bold uppercase tracking-wider";
+                defaultLabel.textContent = "Default Card";
+                pmCardActions.appendChild(defaultLabel);
+            }
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = "px-3.5 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-colors";
+            deleteBtn.textContent = "Delete";
+            deleteBtn.onclick = () => deleteCard(activePm.id);
+            pmCardActions.appendChild(deleteBtn);
+        }
+
+        // --- PRORATION HANDLING ---
+        function changePortalQty(btn, delta) {
+            const container = btn.parentNode;
+            const input = container.querySelector('.portal-dynamic-qty');
+            const span = container.querySelector('.portal-dynamic-qty-span');
+            
+            const newVal = Math.max(1, parseInt(input.value) + delta);
+            input.value = newVal;
+            if (span) span.textContent = newVal;
+        }
+
+        function openProrationModal() {
+            const modal = document.getElementById('proration-modal');
+            const modalInner = modal.querySelector('div');
+            
+            document.getElementById('proration-loading').classList.remove('hidden');
+            document.getElementById('proration-content').classList.add('hidden');
+
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            modalInner.classList.remove('scale-95');
+        }
+
+        function closeProrationModal() {
+            const modal = document.getElementById('proration-modal');
+            const modalInner = modal.querySelector('div');
+            
+            modal.classList.add('opacity-0');
+            modalInner.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+            pendingQuotaUpdate = null;
+        }
+
+        async function initQuotaUpdate(subscriptionId, itemId, currentQty, button) {
+            const input = button.parentNode.parentNode.querySelector('.portal-dynamic-qty');
+            const targetQty = parseInt(input.value);
+            
+            if (targetQty === currentQty) return;
+
+            button.disabled = true;
+            button.innerHTML = '<span class="animate-spin material-symbols-outlined text-[9px]">progress_activity</span>';
+
+            openProrationModal();
+            document.getElementById('proration-target-qty').innerHTML = `License Capacity to <strong class="text-[var(--color-text-primary)]">${targetQty}</strong> seats`;
+
+            try {
+                const response = await fetch(`${apiBaseURL}/preview-proration`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, sessionToken: sessionToken, subscriptionId, subscriptionItemId: itemId, quantity: targetQty })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Unable to preview price adjustments.');
+
+                pendingQuotaUpdate = { subscriptionId, itemId, targetQty };
+
+                const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: data.currency || 'USD' });
+                const amountText = formatter.format(data.amount_due / 100);
+
+                document.getElementById('proration-immediate-amount').textContent = amountText;
+                document.getElementById('proration-next-date').textContent = data.nextBillingDate;
+                document.getElementById('proration-next-amount').textContent = data.nextCycleBaseAmount;
+                
+                document.getElementById('proration-loading').classList.add('hidden');
+                document.getElementById('proration-content').classList.remove('hidden');
+            } catch (err) {
+                closeProrationModal();
+                showError(err.message);
+            } finally {
+                button.disabled = false;
+                button.textContent = "Save";
+            }
+        }
+
+        async function initPlanUpdate(subscriptionId, itemId, newPlan, button) {
+            button.disabled = true;
+            button.dataset.originalHtml = button.innerHTML;
+            button.innerHTML = '<span class="animate-spin material-symbols-outlined text-[9px]">progress_activity</span>';
+
+            openProrationModal();
+            document.getElementById('proration-target-qty').innerHTML = `Plan tier to <strong class="uppercase text-[var(--color-text-primary)]">${newPlan}</strong>`;
+
+            try {
+                const response = await fetch(`${apiBaseURL}/preview-proration`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, sessionToken, subscriptionId, subscriptionItemId: itemId, newPlan })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Unable to preview plan changes.');
+
+                pendingQuotaUpdate = { subscriptionId, itemId, targetQty: undefined, newPlan };
+
+                const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: data.currency || 'USD' });
+                const amountText = formatter.format(data.amount_due / 100);
+
+                document.getElementById('proration-immediate-amount').textContent = amountText;
+                document.getElementById('proration-next-date').textContent = data.nextBillingDate;
+                document.getElementById('proration-next-amount').textContent = data.nextCycleBaseAmount;
+                
+                document.getElementById('proration-loading').classList.add('hidden');
+                document.getElementById('proration-content').classList.remove('hidden');
+            } catch (err) {
+                closeProrationModal();
+                showError(err.message);
+            } finally {
+                button.disabled = false;
+                button.innerHTML = button.dataset.originalHtml;
+            }
+        }
+
+        function triggerUpgradeDowngradeOTP(applyMode) {
+            if (!pendingQuotaUpdate) return;
+            if (pendingQuotaUpdate.newPlan) {
+                requestActionOTP('upgrade-plan', applyMode);
+            } else {
+                requestActionOTP('update-quota', applyMode);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function portalDeregisterDevice(deviceId) {
+            if (!confirm("Are you sure you want to revoke authorization for this device?")) return;
+
+            try {
+                const response = await fetch(`${apiBaseURL}/portal-deregister-device`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, sessionToken: sessionToken, deviceId })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Failed to deregister device.');
+
+                showSuccess("Device access revoked.");
+                activeCardIndex = 0;
+                setTimeout(refreshDashboard, 1000);
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        async function portalDeleteRevokedDevice(deviceId) {
+            if (!confirm("Remove this device from the revoked list?")) return;
+
+            try {
+                const response = await fetch(`${apiBaseURL}/delete-revoked-device`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, sessionToken: sessionToken, deviceId })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Failed to remove device.');
+
+                showSuccess("Device removed from revoked list.");
+                setTimeout(refreshDashboard, 1000);
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        function toggleAddCardForm() {
+            document.getElementById('add-pm-container').classList.toggle('is-expanded');
+        }
+
+        function initPortalStripeCard() {
+            if (cardElement) return; 
+            const isLightTheme = document.documentElement.classList.contains('theme-light');
+            const style = {
+                base: {
+                    color: isLightTheme ? '#09090b' : '#ffffff',
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                    fontSmoothing: 'antialiased',
+                    fontSize: '13px',
+                    '::placeholder': { color: isLightTheme ? '#71717a' : '#a3a3a3' }
+                },
+                invalid: { color: '#ef4444', iconColor: '#ef4444' }
+            };
+            cardElement = elements.create('card', { style: style, hidePostalCode: true });
+            cardElement.mount('#card-element-portal');
+            cardElement.on('change', (e) => {
+                document.getElementById('portal-card-errors').textContent = e.error ? e.error.message : '';
+            });
+        }
+
+        async function submitNewCard() {
+            const submitBtn = document.getElementById('add-card-submit');
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Saving...";
+
+            try {
+                const { paymentMethod, error } = await stripe.createPaymentMethod({
+                    type: 'card', card: cardElement, billing_details: { email: userEmail }
+                });
+                if (error) throw new Error(error.message);
+
+                const response = await fetch(`${apiBaseURL}/add-payment-method`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, sessionToken: sessionToken, paymentMethodId: paymentMethod.id })
+                });
+
+                const resData = await response.json();
+                if (!response.ok) throw new Error(resData.message || 'Failed to attach payment card.');
+
+                showSuccess("Card added.");
+                cardElement.clear();
+                toggleAddCardForm();
+                setTimeout(refreshDashboard, 1000);
+            } catch (err) {
+                showError(err.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Save Payment Card";
+            }
+        }
+
+        function toggleBillingForm() {
+            document.getElementById('billing-edit-container').classList.toggle('is-expanded');
+        }
+
+        async function submitBillingUpdate() {
+            const submitBtn = document.getElementById('update-billing-submit');
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Saving...";
+
+            const payload = {
+                line1: document.getElementById('billing-address').value,
+                city: document.getElementById('billing-city').value,
+                state: document.getElementById('billing-state').value,
+                postal_code: document.getElementById('postal-code').value,
+                country: document.getElementById('billing-country').value
+            };
+
+            try {
+                const response = await fetch(`${apiBaseURL}/update-billing`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, sessionToken: sessionToken, address: payload })
+                });
+
+                const resData = await response.json();
+                if (!response.ok) throw new Error(resData.message || 'Update failed.');
+
+                showSuccess("Billing address updated.");
+                toggleBillingForm();
+                setTimeout(refreshDashboard, 1000);
+            } catch (err) {
+                showError(err.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Save Details";
+            }
+        }
+
+        async function setDefaultCard(pmId) {
+            try {
+                const response = await fetch(`${apiBaseURL}/set-default-payment-method`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        sessionToken: sessionToken,
+                        paymentMethodId: pmId
+                    })
+                });
+
+                const resData = await response.json();
+                if (!response.ok) throw new Error(resData.message || 'Failed to set default payment card.');
+
+                showSuccess("Default card updated.");
+                setTimeout(refreshDashboard, 1000);
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        async function deleteCard(pmId) {
+            if (!confirm("Are you sure you want to delete this payment card?")) return;
+
+            try {
+                const response = await fetch(`${apiBaseURL}/delete-payment-method`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        sessionToken: sessionToken,
+                        paymentMethodId: pmId
+                    })
+                });
+
+                const resData = await response.json();
+                if (!response.ok) throw new Error(resData.message || 'Failed to delete payment card.');
+
+                showSuccess("Payment card detached.");
+                activeCardIndex = 0;
+                setTimeout(refreshDashboard, 1000);
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        async function regenerateWebLicenseKey() {
+            if (!confirm("Are you sure you want to rotate your license key? Any connected device terminals will be deauthorized until updated with the new key.")) return;
+            
+            try {
+                const response = await fetch(`${apiBaseURL}/regenerate-license-key`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, sessionToken: sessionToken })
+                });
+                
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Regeneration failed.');
+                
+                showSuccess("License key rotated.");
+                savedLicenseKey = data.licenseKey;
+                document.getElementById('display-license-key').textContent = savedLicenseKey;
+                refreshDashboard();
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        // --- GITHUB TICKETS SYSTEM ---
+        let selectedAttachmentFilesList = [];
+
+        function handleAttachmentFilesChange(input) {
+            const files = Array.from(input.files);
+            
+            files.forEach(file => {
+                if (selectedAttachmentFilesList.length >= 5) {
+                    showError("Maximum 5 file attachments permitted.");
+                    return;
+                }
+                if (file.size > 10 * 1024 * 1024) {
+                    showError(`File "${file.name}" exceeds 10MB.`);
+                    return;
+                }
+                if (!selectedAttachmentFilesList.some(f => f.name === file.name && f.size === file.size)) {
+                    selectedAttachmentFilesList.push(file);
+                }
+            });
+
+            renderAttachmentPreviewBadges();
+            input.value = '';
+        }
+
+        function removeSelectedAttachment(index) {
+            selectedAttachmentFilesList.splice(index, 1);
+            renderAttachmentPreviewBadges();
+        }
+
+        function renderAttachmentPreviewBadges() {
+            const previewContainer = document.getElementById('attachment-files-preview-list');
+            previewContainer.innerHTML = '';
+
+            selectedAttachmentFilesList.forEach((file, idx) => {
+                const isImg = file.type.startsWith('image/');
+                const badge = document.createElement('div');
+                badge.className = 'flex items-center gap-1.5 bg-[var(--color-card-bg)] px-2.5 py-1.5 rounded-lg text-[10px] font-semibold text-[var(--color-text-secondary)] border border-[var(--color-card-border)]';
+                badge.innerHTML = `
+                    <span class="material-symbols-outlined text-[13px]">${isImg ? 'image' : 'draft'}</span>
+                    <span class="truncate max-w-[100px]">${escapeHtml(file.name)}</span>
+                    <button type="button" onclick="removeSelectedAttachment(${idx})" class="material-symbols-outlined text-[13px] text-red-500 hover:text-red-400 ml-1">close</button>
+                `;
+                previewContainer.appendChild(badge);
+            });
+        }
+
+        const delayTimer = ms => new Promise(res => setTimeout(ms, res));
+
+        async function submitWebFeedback(e) {
+            e.preventDefault();
+            const btn = document.getElementById('feedback-submit-btn');
+            btn.disabled = true;
+            btn.textContent = "Submitting...";
+            
+            const title = document.getElementById('feedback-title-input').value;
+            const body = document.getElementById('feedback-body-input').value;
+            const category = document.getElementById('feedback-category-input').value;
+            
+            const formData = new FormData();
+            formData.append('email', userEmail);
+            formData.append('sessionToken', sessionToken);
+            if (savedLicenseKey) {
+                formData.append('licenseKey', savedLicenseKey);
+            }
+            formData.append('title', title);
+            formData.append('body', body);
+            formData.append('category', category);
+
+            for (let i = 0; i < selectedAttachmentFilesList.length; i++) {
+                formData.append('attachments', selectedAttachmentFilesList[i]);
+                if (selectedAttachmentFilesList.length > 1 && i < selectedAttachmentFilesList.length - 1) {
+                    await delayTimer(200);
+                }
+            }
+            
+            try {
+                const response = await fetch(`${apiBaseURL}/submit-priority-feedback`, {
+                    method: 'POST',
+                    body: formData 
+                });
+                
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(data.message || 'Submission failed.');
+                
+                showSuccess("Priority ticket created.");
+                document.getElementById('feedback-title-input').value = '';
+                document.getElementById('feedback-body-input').value = '';
+                selectedAttachmentFilesList = [];
+                renderAttachmentPreviewBadges();
+                
+                showTicketList();
+                refreshDashboard();
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Submit Issue";
+            }
+        }
+
+        function showTicketList() {
+            document.getElementById('ticket-list-view').classList.remove('hidden');
+            document.getElementById('ticket-composer-view').classList.add('hidden');
+            document.getElementById('feedback-thread-view').classList.add('hidden');
+            document.getElementById('btn-new-ticket').classList.remove('hidden');
+            openTicketIssueNumber = null;
+        }
+
+        function showNewTicketForm() {
+            document.getElementById('ticket-list-view').classList.add('hidden');
+            document.getElementById('ticket-composer-view').classList.remove('hidden');
+            document.getElementById('feedback-thread-view').classList.add('hidden');
+            document.getElementById('btn-new-ticket').classList.add('hidden');
+            openTicketIssueNumber = null;
+        }
+
+        function showTicketDetail(index, e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const tickets = cachedPortalData?.feedbackTickets || [];
+            const data = tickets[index];
+            if (!data) return;
+            openTicketIssueNumber = data.issueNumber;
+
+            document.getElementById('ticket-list-view').classList.add('hidden');
+            document.getElementById('ticket-composer-view').classList.add('hidden');
+            document.getElementById('btn-new-ticket').classList.add('hidden');
+            document.getElementById('feedback-thread-view').classList.remove('hidden');
+
+            document.getElementById('thread-ticket-title').textContent = data.title;
+            document.getElementById('thread-ticket-number').textContent = data.issueNumber;
+            document.getElementById('thread-ticket-created').textContent = data.created;
+            document.getElementById('thread-ticket-link').href = data.url;
+            document.getElementById('thread-write-reply-link').href = data.url;
+
+            const badge = document.getElementById('thread-ticket-badge');
+            if (data.state === 'closed') {
+                badge.innerHTML = `<span class="material-symbols-outlined text-[12px]">check_circle</span> Closed`;
+                badge.className = 'px-3 py-1 rounded-full text-[9px] font-bold text-white bg-purple-600 flex items-center gap-1';
+            } else {
+                badge.innerHTML = `<span class="material-symbols-outlined text-[12px]">adjust</span> Open`;
+                badge.className = 'px-3 py-1 rounded-full text-[9px] font-bold text-white bg-emerald-600 flex items-center gap-1';
+            }
+
+            const feedContainer = document.getElementById('thread-comments-feed');
+            feedContainer.innerHTML = '';
+
+            const renderComment = (author, avatarHtml, date, body, isLast) => `
+                <div class="relative flex gap-3.5 w-full pt-4 first:pt-0">
+                    <div class="w-8 h-8 rounded-full border border-[var(--color-card-border)] bg-[var(--color-secondary)] relative z-10 hidden sm:flex items-center justify-center shrink-0 overflow-hidden text-[var(--color-text-secondary)]">
+                        ${avatarHtml}
+                    </div>
+                    
+                    <div class="flex-1 bg-[var(--color-secondary)] rounded-2xl relative z-10 overflow-hidden border border-[var(--color-card-border)]">
+                        <div class="flex items-center justify-between px-4 py-2.5 bg-[var(--color-card-bg)] border-b border-[var(--color-card-border)]">
+                            <span class="font-bold text-xs text-[var(--color-text-primary)]">${author}</span>
+                            <span class="text-[9px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)]">${date}</span>
+                        </div>
+                        <div class="p-4 text-xs text-[var(--color-text-primary)] markdown-preview">
+                            ${marked.parse(body)}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const youAvatar = `<span class="material-symbols-outlined text-base">person</span>`;
+            
+            const originalCmt = document.createElement('div');
+            originalCmt.innerHTML = renderComment('You', youAvatar, data.created, data.body, !data.comments || data.comments.length === 0);
+            feedContainer.appendChild(originalCmt);
+
+            if (data.comments && data.comments.length > 0) {
+                data.comments.forEach((cmt, idx) => {
+                    const isLast = idx === data.comments.length - 1;
+                    const avatarHtml = `<img src="${cmt.avatar}" alt="${cmt.author}" class="w-full h-full object-cover" />`;
+                    const item = document.createElement('div');
+                    item.innerHTML = renderComment(cmt.author, avatarHtml, cmt.created, cmt.body, isLast);
+                    feedContainer.appendChild(item);
+                });
+            }
+        }
+
+        async function fetchDashboardData() {
+            const response = await fetch(`${apiBaseURL}/get-dashboard-data`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, sessionToken: sessionToken })
+            });
+            const data = await response.json();
+            return response.ok ? data : null;
+        }
+
+        async function refreshDashboard() {
+            try {
+                const data = await fetchDashboardData();
+                if (data) renderDashboard(data);
+            } catch (err) {
+                console.error("Refresh error:", err);
+            }
+        }
+
+        // --- AUTO-SYNC: keep the dashboard current without a manual page reload ---
+        // Account changes made outside the portal (e.g. a device registered or revoked
+        // from the Sapphire app) are picked up automatically: immediately when the tab
+        // regains focus, and on a lightweight background poll while it stays open.
+        let portalAutoSyncTimer = null;
+        const PORTAL_AUTO_SYNC_INTERVAL_MS = 30000;
+
+        async function refreshDashboardIfChanged() {
+            if (!userEmail || !sessionToken) return;
+            try {
+                const data = await fetchDashboardData();
+                if (!data) return;
+                if (JSON.stringify(data) === JSON.stringify(cachedPortalData)) return;
+
+                renderDashboard(data);
+
+                // Preserve an open priority-support thread across the re-render.
+                if (openTicketIssueNumber !== null && data.feedbackTickets) {
+                    const idx = data.feedbackTickets.findIndex(t => t.issueNumber === openTicketIssueNumber);
+                    if (idx !== -1) showTicketDetail(idx);
+                }
+            } catch (err) {
+                console.error("Auto-sync error:", err);
+            }
+        }
+
+        function startPortalAutoSync() {
+            if (portalAutoSyncTimer) return;
+            portalAutoSyncTimer = setInterval(() => {
+                if (document.visibilityState === 'visible') refreshDashboardIfChanged();
+            }, PORTAL_AUTO_SYNC_INTERVAL_MS);
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') refreshDashboardIfChanged();
+            });
+            window.addEventListener('focus', refreshDashboardIfChanged);
+        }
+
+        function switchPortalTab(targetTab) {
+            document.querySelectorAll('.portal-tab-view').forEach(pane => {
+                pane.classList.add('hidden');
+            });
+            const activePane = document.getElementById(`tab-content-${targetTab}`);
+            activePane.classList.remove('hidden');
+
+            document.querySelectorAll('[id^="tab-btn-"]').forEach(btn => {
+                btn.className = "w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 text-[var(--color-text-secondary)] hover:bg-[var(--color-secondary)] hover:text-[var(--color-text-primary)]";
+            });
+            
+            document.getElementById(`tab-btn-${targetTab}`).className = "w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 bg-[var(--color-text-primary)] text-[var(--color-background)]";
+        }
+
+        function switchComposerTab(targetComposerTab) {
+            const writeBtn = document.getElementById('composer-tab-btn-write');
+            const previewBtn = document.getElementById('composer-tab-btn-preview');
+            const textarea = document.getElementById('feedback-body-input');
+            const previewContainer = document.getElementById('feedback-body-preview-container');
+
+            if (targetComposerTab === 'write') {
+                writeBtn.className = "px-5 py-2 text-xs font-bold text-[var(--color-text-primary)] bg-[var(--color-card-bg)] rounded-xl transition-colors";
+                previewBtn.className = "px-5 py-2 text-xs font-bold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] rounded-xl transition-colors bg-transparent";
+
+                textarea.classList.remove('hidden');
+                previewContainer.classList.add('hidden');
+            } else {
+                previewBtn.className = "px-5 py-2 text-xs font-bold text-[var(--color-text-primary)] bg-[var(--color-card-bg)] rounded-xl transition-colors";
+                writeBtn.className = "px-5 py-2 text-xs font-bold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] rounded-xl transition-colors bg-transparent";
+
+                const rawMarkdown = textarea.value.trim();
+                previewContainer.innerHTML = rawMarkdown ? marked.parse(rawMarkdown) : '<p class="text-xs text-[var(--color-text-secondary)] font-medium italic">Nothing to preview. Write your message first.</p>';
+
+                textarea.classList.add('hidden');
+                previewContainer.classList.remove('hidden');
+            }
+        }
+
+        function handleComposerInput(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = `${textarea.scrollHeight}px`;
+        }
+    </script><iframe name="__privateStripeController5761" frameborder="0" allowtransparency="true" scrolling="no" role="presentation" allow="payment *" src="https://js.stripe.com/v3/controller-with-preconnect-e08badfdd6cb81e68707e82ee478c280.html#__shared_params__[version]=v3&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%22c2b79c89-e0bd-4f9c-9643-e8b56a3d0ddb%22%2C%22assignments%22%3A%7B%7D%7D&apiKey=pk_live_51ThK4CPSdch7ZFyc1Ly5vvxjidrYj5gN0Y2Rr5MkIxdsEKkH5seKJvMXZV4ayKgZAl8PXdv2PM7G3spONk6utkuC00JNvByVMA&stripeJsId=c2b79c89-e0bd-4f9c-9643-e8b56a3d0ddb&stripeObjId=sobj-6f0de46a-0db8-499f-a967-a5e4299f509a&firstStripeInstanceCreatedLatency=150&controllerCount=1&isCheckout=false&stripeJsLoadTime=1789869751516.9&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=d0c270b1-29a8-4746-a748-71adefb0198e200bc2&mids[sid]=NA&referrer=https%3A%2F%2Fsapphire-app.tech%2Fportal&controllerId=__privateStripeController5761" aria-hidden="true" tabindex="-1" style="border-width: medium !important; border-style: none !important; border-color: currentcolor !important; border-image: none !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; visibility: hidden !important; position: fixed !important; height: 1px !important; pointer-events: none !important; user-select: none !important;"></iframe>
+
+
+<iframe name="__privateStripeMetricsController5760" frameborder="0" allowtransparency="true" scrolling="no" role="presentation" allow="payment *" src="https://js.stripe.com/v3/m-outer-3437aaddcdf6922d623e172c2d6f9278.html#url=https%3A%2F%2Fsapphire-app.tech%2Fportal&title=Sapphire%20-%20Manage%20Account%20%26%20Subscriptions&referrer=&muid=d0c270b1-29a8-4746-a748-71adefb0198e200bc2&sid=NA&version=6&preview=false&__shared_params__[version]=v3" aria-hidden="true" tabindex="-1" style="border-width: medium !important; border-style: none !important; border-color: currentcolor !important; border-image: none !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; visibility: hidden !important; position: fixed !important; height: 1px !important; pointer-events: none !important; user-select: none !important;"></iframe></body></html>
