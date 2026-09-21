@@ -2,6 +2,9 @@
 
 **Native macOS clipboard manager. Press a shortcut, search your history, paste — and it's gone.**
 
+> [!WARNING]
+> **macOS will block Recall on first launch.** After installing, go to **System Settings → Privacy & Security**, scroll down, and click **"Open Anyway"** next to Recall. You'll only need to do this once.
+
 [![Download](https://img.shields.io/badge/Download-v1.0-black?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/recall-macos/recall-macos/releases/latest/download/Recall.dmg)
 
 [![macOS](https://img.shields.io/badge/macOS-14%2B-black?style=flat-square&logo=apple)](https://www.apple.com/macos/)
@@ -12,9 +15,6 @@
 ---
 
 ## Install
-
-> [!WARNING]
-> **First launch:** macOS may block Recall with "Apple could not verify…". Click Done, then go to **Applications → right-click Recall → Open → Open**. One-time only.
 
 1. Click **Download** above to get `Recall.dmg`
 2. Open the DMG and drag `Recall` into your **Applications** folder
