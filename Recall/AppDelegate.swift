@@ -23,6 +23,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var expirationTimer: Timer?
     private var menuBarIconCancellable: AnyCancellable?
     private var shortcutCancellable: AnyCancellable?
+    private var appearanceObservation: NSKeyValueObservation?
 
     // MARK: - Init
 
@@ -43,11 +44,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         applyStoredAppearance()
+        startWatchingAppearance()
         setupMenuBar()
         syncMenuBarIcon()
         registerHotkey()
         syncShortcut()
         monitor.start()
+        AdManager.shared.start()
         Task { @MainActor in store.pruneExpired() }
         startExpirationTimer()
         // Don't force screenshot redirect — user controls this in Settings > Privacy.
@@ -66,6 +69,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case "light": NSApp.appearance = NSAppearance(named: .aqua)
         case "dark":  NSApp.appearance = NSAppearance(named: .darkAqua)
         default:      NSApp.appearance = nil
+        }
+    }
+
+    private func updateDockIcon() {
+        let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+        if isDark {
+            NSApp.applicationIconImage = NSImage(named: "AppIcon")
+        } else {
+            NSApp.applicationIconImage = NSImage(named: "AppIconLight")
+        }
+    }
+
+    private func startWatchingAppearance() {
+        updateDockIcon()
+        appearanceObservation = NSApp.observe(\.effectiveAppearance) { [weak self] _, _ in
+            DispatchQueue.main.async { self?.updateDockIcon() }
         }
     }
 

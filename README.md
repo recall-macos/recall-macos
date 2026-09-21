@@ -1,76 +1,49 @@
 # Recall
 
-**A beautiful, native macOS clipboard manager.**
+**Native macOS clipboard manager. Press a shortcut, search your history, paste — and it's gone.**
 
-Press a global shortcut from anywhere and your entire clipboard history appears instantly. Search it, navigate with the keyboard, and paste in one keystroke — then it's gone. Recall lives quietly in the menu bar and never gets in your way.
-
-[![Download](https://img.shields.io/badge/Download-Recall_1.0-blue?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/recall-macos/recall-macos/releases/latest/download/Recall.zip)
+[![Download](https://img.shields.io/badge/Download-v1.0-black?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/recall-macos/recall-macos/releases/latest/download/Recall.zip)
 
 [![macOS](https://img.shields.io/badge/macOS-14%2B-black?style=flat-square&logo=apple)](https://www.apple.com/macos/)
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange?style=flat-square&logo=swift)](https://swift.org)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/recall-macos/recall-macos?style=flat-square&color=yellow)](https://github.com/recall-macos/recall-macos/stargazers)
 
 ---
 
 ## Install
 
-1. Click **Download** above
-2. Unzip `Recall.zip`
-3. Drag `Recall.app` to your Applications folder
-4. Open it — press **Allow** if macOS asks about security
-5. Press **⌘⇧V** from any app to open your clipboard history
+1. Click **Download** above and unzip `Recall.zip`
+2. Drag `Recall.app` to your **Applications** folder
+3. Right-click → **Open** → **Open** to bypass the first-launch security prompt
+4. Press **⌘⇧V** from any app
 
-> **macOS security note:** Recall is not yet notarized. If you see "unidentified developer", right-click the app → Open → Open to bypass it once.
+> Recall is not notarized. The right-click Open step is only needed once.
 
 ---
 
 ## What it does
 
-Recall sits in your menu bar and silently captures everything you copy. The moment you press the global shortcut, a panel appears over whatever you're doing:
+Recall runs silently in your menu bar and captures everything you copy. Hit the global shortcut from anywhere — a panel appears over whatever you're doing, your full history already loaded.
 
-- Type to search — results filter instantly
-- Arrow keys navigate, Enter pastes into the previous app
-- Right-click any item for quick actions (copy, pin, delete)
-- Escape closes it without pasting anything
-
-That's the whole interaction. No setup, no configuration required to start.
+Type to search. Arrow keys to navigate. **↵** to paste back into whatever you were doing. **⎋** to dismiss without touching your clipboard. That's it.
 
 ---
 
 ## Features
 
-**Clipboard history**
-Captures text, URLs, rich text, images, and files. Newest items first. Deduplicates automatically. Stores up to 1000 items (configurable).
-
-**Smart content detection**
-Automatically classifies what you copied:
-
-| Type | Detection |
-|------|-----------|
-| URL | `http://`, `https://`, `ftp://` |
-| Email | Standard address format |
-| Phone | Common number formats |
-| Code | Language-aware heuristics |
-| Image | PNG, TIFF, JPEG, screenshots |
-| File | Finder copies and drag-and-drop |
-
-**Search**
-Fuzzy, case-insensitive, instant. Searches text content, filenames, and URLs.
-
-**Filter tabs**
-All — Text — Links — Images — Files — Code — Email — Pinned
-
-**Pinning**
-Pin important items. Pinned items survive automatic history pruning and filtering.
-
-**Smart paste**
-Pressing Enter copies the item and immediately pastes it into whatever app you were in before opening Recall. No manual ⌘V required.
-
-**Privacy**
-- Everything stored locally — nothing uploaded, ever
-- Sensitive content filter skips OTPs, credit card numbers, and password-manager output automatically
-- Exclude any app from monitoring (e.g. 1Password, Bitwarden) in Settings
-- Auto-delete history after 1 hour, 1 day, 7 days, or 30 days
+| | |
+|---|---|
+| **Clipboard history** | Text, URLs, images, files, rich text. Up to 1000 items, auto-deduplicated. |
+| **Smart content detection** | Automatically tags URLs, emails, phone numbers, code, images, and files. |
+| **Instant search** | Fuzzy, case-insensitive, searches content and filenames as you type. |
+| **Filter tabs** | All · Text · Links · Images · Files · Code · Email · Pinned |
+| **Smart paste** | ↵ copies and immediately pastes into the previous app — no manual ⌘V. |
+| **Pinning** | Pin items to keep them through pruning and at the top of search. |
+| **Privacy controls** | OTP codes, credit cards, and password manager output are skipped automatically. |
+| **App exclusions** | Block any installed app from being monitored — 1Password, Bitwarden, etc. |
+| **Auto-expire** | Clear history after 1 hour, 1 day, 7 days, 30 days, or never. |
+| **Adaptive icon** | Light, Dark, and Tinted variants — switches with your system appearance. |
 
 ---
 
@@ -79,15 +52,15 @@ Pressing Enter copies the item and immediately pastes it into whatever app you w
 | Key | Action |
 |-----|--------|
 | ⌘⇧V | Open Recall (configurable) |
-| ↑ / ↓ | Move selection |
-| ↵ | Copy and paste into previous app |
-| ⌘P | Pin / unpin |
-| ⌘⌫ | Delete item |
+| ↑ / ↓ | Navigate history |
+| ↵ | Copy + paste into previous app |
+| ⌘P | Pin / unpin selected item |
+| ⌘⌫ | Delete selected item |
 | ⌘F | Focus search |
 | ⌘← / ⌘→ | Switch filter tab |
 | ⌘1–6 | Jump to filter tab |
-| 1–9 | Quick-select item by position |
-| ⎋ | Dismiss |
+| 1–9 | Quick-select by position |
+| ⎋ | Close without pasting |
 
 ---
 
@@ -97,10 +70,19 @@ Pressing Enter copies the item and immediately pastes it into whatever app you w
 - History limit: 50 / 100 / 250 / 500 / 1000 / Unlimited
 - Auto-expire: 1 hour / 1 day / 7 days / 30 days / Never
 - Customizable global shortcut
-- App exclusions (any installed app)
-- Screenshot capture redirect
+- App exclusions
+- Screenshot capture toggle
 - Color scheme: System / Light / Dark
-- Show / hide menu bar icon
+
+---
+
+## Privacy
+
+Everything is stored locally in `~/Library/Application Support/Recall/`. Nothing is ever uploaded, synced, or logged remotely. The sensitive content filter runs on-device and blocks:
+
+- One-time passwords (6–8 digit codes)
+- Credit card numbers
+- Strings copied from 1Password, Bitwarden, and similar password managers (via app exclusions)
 
 ---
 
@@ -108,45 +90,45 @@ Pressing Enter copies the item and immediately pastes it into whatever app you w
 
 ```
 Recall/
-├── AppDelegate.swift               # Lifecycle, menu bar, hotkey, panel
+├── AppDelegate.swift               # Lifecycle, menu bar, hotkey registration, panel
 ├── Core/
-│   ├── ClipboardMonitor.swift      # NSPasteboard polling + extraction
-│   ├── ClipboardStore.swift        # History, pinning, persistence
+│   ├── ClipboardMonitor.swift      # NSPasteboard polling every 0.5s
+│   ├── ClipboardStore.swift        # History, pinning, deduplication, pruning
 │   ├── HotkeyManager.swift         # Carbon RegisterEventHotKey wrapper
-│   ├── PanelController.swift       # Keyboard cursor state
+│   ├── PanelController.swift       # Keyboard cursor + selection state
 │   ├── PasteEngine.swift           # Smart paste via CGEvent
 │   └── SearchEngine.swift          # Fuzzy search + category filter
 ├── Models/
-│   ├── ClipboardItem.swift         # Data model
-│   └── AppSettings.swift           # @AppStorage settings
+│   ├── ClipboardItem.swift         # Core data model
+│   └── AppSettings.swift           # @AppStorage-backed settings
 ├── Extensions/
-│   ├── String+ContentType.swift    # Content type detection
-│   ├── NSImage+Thumbnail.swift     # Image downscaling
-│   └── Notifications.swift         # Notification names + key events
+│   ├── String+ContentType.swift    # Content type detection heuristics
+│   ├── NSImage+Thumbnail.swift     # Downscaling for display
+│   └── Notifications.swift         # Notification names + key event constants
 ├── Persistence/
 │   └── ClipboardStorage.swift      # JSON encode/decode to ~/Library
 └── UI/
-    ├── ClipboardPanel/             # Main floating panel
-    ├── Settings/                   # Settings window (4 panes)
-    ├── Onboarding/                 # First-launch screen
+    ├── ClipboardPanel/             # Main floating panel (NSPanel + SwiftUI)
+    ├── Settings/                   # Settings window
+    ├── Onboarding/                 # First-launch walkthrough
     └── Components/                 # Shared UI components
 ```
 
 **Key technical decisions**
 
-`.nonactivatingPanel` — The panel becomes the key window (receives keyboard events) without making Recall the frontmost app. This is what makes smart paste work: the previous app stays active so Enter can trigger ⌘V into it immediately.
+**`.nonactivatingPanel`** — The panel becomes key window (receives keyboard events) without making Recall the frontmost app. This keeps the previous app active so smart paste can immediately fire ⌘V into it.
 
-`RegisterEventHotKey` — Uses the Carbon API instead of `NSEvent.addGlobalMonitorForEvents`. Carbon fires synchronously inside the key-press event context, which is required for `NSApp.activate()` to work reliably on macOS 14+.
+**`RegisterEventHotKey`** — Carbon API instead of `NSEvent.addGlobalMonitorForEvents`. Carbon fires synchronously inside the key-press event context, which is required for `NSApp.activate()` to work reliably on macOS 14+.
 
-NSPasteboard polling — Polls every 0.5s on a background `DispatchQueue` using `DispatchSourceTimer`. `NSPasteboard` does not post reliable change notifications.
+**NSPasteboard polling** — Polls every 0.5s on a background `DispatchSourceTimer`. `NSPasteboard` change notifications are unreliable; polling is the standard approach used by every clipboard manager.
 
-Gated rich text — `NSAttributedString.readObjects(forClasses:)` silently synthesizes attributed strings from plain text, causing everything to be misclassified as rich text. Recall gates this path on checking `pasteboard.types` for actual RTF declarations first.
+**Gated rich text** — `NSAttributedString.readObjects(forClasses:)` silently synthesizes attributed strings from plain text, which would misclassify everything as rich text. Recall gates this path on an explicit RTF/RTFD type check on `pasteboard.types` first.
 
 ---
 
 ## Build from source
 
-**Requirements:** macOS 14+, Xcode 16+, Swift 5.9+
+**Requirements:** macOS 14+, Xcode 16+, Swift 5.9+. No external dependencies.
 
 ```bash
 git clone https://github.com/recall-macos/recall-macos.git
@@ -154,11 +136,7 @@ cd recall-macos
 open Recall.xcodeproj
 ```
 
-Press **⌘R** in Xcode. No external dependencies.
-
-**Permissions required at runtime**
-- Accessibility — for smart paste
-- Screen Recording — optional, for screenshot capture redirect
+Press **⌘R**. Grant Accessibility permission when prompted — required for smart paste.
 
 ---
 

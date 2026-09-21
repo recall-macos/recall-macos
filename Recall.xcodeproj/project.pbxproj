@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA100001AA100001AA100001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA100002AA100002AA100002 /* Assets.xcassets */; };
 		19D9737A8056D3244B21B584 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059B157CD71451FDD57A9B2F /* HotkeyManager.swift */; };
 		2D3655BBFDC533D3BDEFAE08 /* ClipboardStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD7392F7C2116E02B6699A75 /* ClipboardStore.swift */; };
 		46575EF8B5E5683B270276E0 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 484B9AD26A4ECDF7A6E859AD /* SettingsView.swift */; };
@@ -15,10 +16,12 @@
 		71604B128FA2F79119AF3732 /* ClipboardItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FA81F99D28E8C14546CB22 /* ClipboardItemRow.swift */; };
 		721441FAA7BED60A8D4A06D5 /* PasteEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F93F0BFDDEC81C279C5BF83 /* PasteEngine.swift */; };
 		78D22FFC70D48B6B736C60E3 /* NSImage+Thumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A995A56509608C158D3A680B /* NSImage+Thumbnail.swift */; };
+		977C1F62A35E4CF9807F5E2F /* AdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB52BDFC8114CC6B72F4D61 /* AdManager.swift */; };
 		A86C80D0844C3C90FAF4D78D /* FilterTabsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A36520445014BA46FCDF5DF /* FilterTabsView.swift */; };
 		B47EFF9A6338B7A88521510E /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D2F93C2B0469E8CBBE5387 /* OnboardingView.swift */; };
 		B65AA86F1227954A0A190788 /* String+ContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57F7CF9B1C5E7F835345B031 /* String+ContentType.swift */; };
 		BAA10D066C94E7388F660A23 /* RecallApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55FB9A4BE83E6136E1CEBB3 /* RecallApp.swift */; };
+		C5FB232EE7C84E3194645D0B /* SponsorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C26764C49C74F5E98B1F55C /* SponsorBanner.swift */; };
 		C9F39770C08A24FE1564B5D0 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD68889508186EA73BCE5973 /* AppSettings.swift */; };
 		CD8EA6EF5F76EF2F14B4B215 /* ClipboardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D5643C9D8BD6E8E4781A047 /* ClipboardItem.swift */; };
 		D05BC71223E7823E3A0D7A77 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356D46F64C1F802B1B2CE108 /* AppDelegate.swift */; };
@@ -27,8 +30,6 @@
 		FD59989E523775A888E1B082 /* ClipboardPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718E4C4E5ACE70C56FAF8EE9 /* ClipboardPanelView.swift */; };
 		FDB22F37BB9AB2760CA59F2B /* ClipboardMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2606DCFD5704F749847D7B2C /* ClipboardMonitor.swift */; };
 		FDE95A99A8B55E67E99F6FF3 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F147A62A1EB10DA473F9ECA /* Notifications.swift */; };
-		977C1F62A35E4CF9807F5E2F /* AdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB52BDFC8114CC6B72F4D61 /* AdManager.swift */; };
-		C5FB232EE7C84E3194645D0B /* SponsorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C26764C49C74F5E98B1F55C /* SponsorBanner.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,8 +41,10 @@
 		484B9AD26A4ECDF7A6E859AD /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		57F7CF9B1C5E7F835345B031 /* String+ContentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+ContentType.swift"; sourceTree = "<group>"; };
 		589D612419DE8AD691D1CD7C /* Recall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Recall.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5EB52BDFC8114CC6B72F4D61 /* AdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdManager.swift; sourceTree = "<group>"; };
 		6A36520445014BA46FCDF5DF /* FilterTabsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTabsView.swift; sourceTree = "<group>"; };
 		6B67B3158F743DA29574A67F /* ClipboardPanelWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardPanelWindow.swift; sourceTree = "<group>"; };
+		6C26764C49C74F5E98B1F55C /* SponsorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SponsorBanner.swift; sourceTree = "<group>"; };
 		718E4C4E5ACE70C56FAF8EE9 /* ClipboardPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardPanelView.swift; sourceTree = "<group>"; };
 		7F93F0BFDDEC81C279C5BF83 /* PasteEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteEngine.swift; sourceTree = "<group>"; };
 		8D5643C9D8BD6E8E4781A047 /* ClipboardItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardItem.swift; sourceTree = "<group>"; };
@@ -53,8 +56,7 @@
 		E55FB9A4BE83E6136E1CEBB3 /* RecallApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallApp.swift; sourceTree = "<group>"; };
 		FACFD9079259D08401BA86F9 /* SearchEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchEngine.swift; sourceTree = "<group>"; };
 		FD7392F7C2116E02B6699A75 /* ClipboardStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardStore.swift; sourceTree = "<group>"; };
-		5EB52BDFC8114CC6B72F4D61 /* AdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdManager.swift; sourceTree = "<group>"; };
-		6C26764C49C74F5E98B1F55C /* SponsorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SponsorBanner.swift; sourceTree = "<group>"; };
+		AA100002AA100002AA100002 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -69,6 +71,7 @@
 		2398648CEC1DEFD2236E8232 /* Recall */ = {
 			isa = PBXGroup;
 			children = (
+				AA100002AA100002AA100002 /* Assets.xcassets */,
 				356D46F64C1F802B1B2CE108 /* AppDelegate.swift */,
 				E55FB9A4BE83E6136E1CEBB3 /* RecallApp.swift */,
 				39803FA06EF2B2B54FC1796E /* Core */,
@@ -92,6 +95,14 @@
 				5EB52BDFC8114CC6B72F4D61 /* AdManager.swift */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		39AC7FD92D6443F3A9606C9F /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				6C26764C49C74F5E98B1F55C /* SponsorBanner.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		73CB859C9411B1DC8AA307A4 /* Extensions */ = {
@@ -167,22 +178,23 @@
 			path = Persistence;
 			sourceTree = "<group>";
 		};
-		39AC7FD92D6443F3A9606C9F /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				6C26764C49C74F5E98B1F55C /* SponsorBanner.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		AA100003AA100003AA100003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA100001AA100001AA100001 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8A1CA7FAB5EF7FFF7C657008 /* Recall */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DFC1D6D2A3F8F5D85E1CB54C /* Build configuration list for PBXNativeTarget "Recall" */;
 			buildPhases = (
 				57F579837BEFDE6CCC541D67 /* Sources */,
+				AA100003AA100003AA100003 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -205,7 +217,6 @@
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					8A1CA7FAB5EF7FFF7C657008 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -399,6 +410,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Recall/Recall.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 3J82FFS867;
 				INFOPLIST_FILE = Recall/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -415,6 +427,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Recall/Recall.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 3J82FFS867;
 				INFOPLIST_FILE = Recall/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

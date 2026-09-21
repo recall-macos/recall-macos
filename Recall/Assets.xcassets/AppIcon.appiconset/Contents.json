@@ -1,0 +1,100 @@
+{
+  "images" : [
+    { "idiom": "mac", "scale": "1x", "size": "16x16",   "filename": "icon-light-16.png" },
+    { "idiom": "mac", "scale": "2x", "size": "16x16",   "filename": "icon-light-32.png" },
+    { "idiom": "mac", "scale": "1x", "size": "32x32",   "filename": "icon-light-32.png" },
+    { "idiom": "mac", "scale": "2x", "size": "32x32",   "filename": "icon-light-64.png" },
+    { "idiom": "mac", "scale": "1x", "size": "128x128", "filename": "icon-light-128.png" },
+    { "idiom": "mac", "scale": "2x", "size": "128x128", "filename": "icon-light-256.png" },
+    { "idiom": "mac", "scale": "1x", "size": "256x256", "filename": "icon-light-256.png" },
+    { "idiom": "mac", "scale": "2x", "size": "256x256", "filename": "icon-light-512.png" },
+    { "idiom": "mac", "scale": "1x", "size": "512x512", "filename": "icon-light-512.png" },
+    { "idiom": "mac", "scale": "2x", "size": "512x512", "filename": "icon-light-1024.png" },
+
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "dark" }],
+      "idiom": "mac", "scale": "1x", "size": "16x16",   "filename": "icon-dark-16.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "dark" }],
+      "idiom": "mac", "scale": "2x", "size": "16x16",   "filename": "icon-dark-32.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "dark" }],
+      "idiom": "mac", "scale": "1x", "size": "32x32",   "filename": "icon-dark-32.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "dark" }],
+      "idiom": "mac", "scale": "2x", "size": "32x32",   "filename": "icon-dark-64.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "dark" }],
+      "idiom": "mac", "scale": "1x", "size": "128x128", "filename": "icon-dark-128.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "dark" }],
+      "idiom": "mac", "scale": "2x", "size": "128x128", "filename": "icon-dark-256.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "dark" }],
+      "idiom": "mac", "scale": "1x", "size": "256x256", "filename": "icon-dark-256.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "dark" }],
+      "idiom": "mac", "scale": "2x", "size": "256x256", "filename": "icon-dark-512.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "dark" }],
+      "idiom": "mac", "scale": "1x", "size": "512x512", "filename": "icon-dark-512.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "dark" }],
+      "idiom": "mac", "scale": "2x", "size": "512x512", "filename": "icon-dark-1024.png"
+    },
+
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "tinted" }],
+      "idiom": "mac", "scale": "1x", "size": "16x16",   "filename": "icon-tinted-16.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "tinted" }],
+      "idiom": "mac", "scale": "2x", "size": "16x16",   "filename": "icon-tinted-32.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "tinted" }],
+      "idiom": "mac", "scale": "1x", "size": "32x32",   "filename": "icon-tinted-32.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "dark" }],
+      "idiom": "mac", "scale": "2x", "size": "32x32",   "filename": "icon-tinted-64.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "tinted" }],
+      "idiom": "mac", "scale": "1x", "size": "128x128", "filename": "icon-tinted-128.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "tinted" }],
+      "idiom": "mac", "scale": "2x", "size": "128x128", "filename": "icon-tinted-256.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "tinted" }],
+      "idiom": "mac", "scale": "1x", "size": "256x256", "filename": "icon-tinted-256.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "tinted" }],
+      "idiom": "mac", "scale": "2x", "size": "256x256", "filename": "icon-tinted-512.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "tinted" }],
+      "idiom": "mac", "scale": "1x", "size": "512x512", "filename": "icon-tinted-512.png"
+    },
+    {
+      "appearances": [{ "appearance": "luminosity", "value": "tinted" }],
+      "idiom": "mac", "scale": "2x", "size": "512x512", "filename": "icon-tinted-1024.png"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
