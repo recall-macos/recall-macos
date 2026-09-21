@@ -335,6 +335,17 @@ struct ClipboardPanelView: View {
                 }
                 .buttonStyle(.plain)
                 .help("Settings")
+                Button {
+                    NSApplication.shared.terminate(nil)
+                } label: {
+                    Image(systemName: "power")
+                        .font(.system(size: 13))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 28, height: 28)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .help("Quit Recall")
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 8)

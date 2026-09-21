@@ -55,6 +55,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         AdManager.shared.start()
         Task { @MainActor in store.pruneExpired() }
         startExpirationTimer()
+        screenshotWatcher = ScreenshotWatcher(store: store, monitor: monitor)
+        screenshotWatcher?.start()
         syncLaunchAtLogin()
 
         if !settings.hasCompletedOnboarding {
@@ -92,7 +94,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func syncScreenshotWatcher() {
         if ScreenshotCapture.isEnabled {
-            screenshotWatcher = ScreenshotWatcher(store: store)
+            screenshotWatcher = ScreenshotWatcher(store: store, monitor: monitor)
             screenshotWatcher?.start()
         }
         screenshotWatcherObserver = NotificationCenter.default.addObserver(
@@ -101,7 +103,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             guard let self else { return }
             let on = note.object as? Bool ?? false
             if on {
-                self.screenshotWatcher = ScreenshotWatcher(store: self.store)
+                self.screenshotWatcher = ScreenshotWatcher(store: self.store, monitor: self.monitor)
                 self.screenshotWatcher?.start()
             } else {
                 self.screenshotWatcher?.stop()

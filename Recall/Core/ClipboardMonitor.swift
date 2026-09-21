@@ -20,6 +20,11 @@ final class ClipboardMonitor: ObservableObject {
 
     // Front-most app at the moment the panel is about to open (used for smart paste)
     private(set) var lastActiveApp: NSRunningApplication?
+    private var suppressCount = 0
+
+    func suppressNextChange() {
+        queue.async { self.suppressCount += 1 }
+    }
 
     init(store: ClipboardStore, settings: AppSettings = .shared) {
         self.store = store
@@ -66,6 +71,7 @@ final class ClipboardMonitor: ObservableObject {
         let currentCount = pasteboard.changeCount
         guard currentCount != lastChangeCount else { return }
         lastChangeCount = currentCount
+        if suppressCount > 0 { suppressCount -= 1; return }
 
         // Skip apps the user has explicitly excluded.
         if let frontApp = NSWorkspace.shared.frontmostApplication,
