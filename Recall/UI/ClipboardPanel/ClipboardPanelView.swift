@@ -342,11 +342,16 @@ struct ClipboardPanelView: View {
         .background(.thinMaterial)
     }
 
+    // ADS: uncomment SponsorBanner() below when AdSense is set up.
+    // 1. Add publisher ID + slot ID to docs/ad.html
+    // 2. Enable GitHub Pages on the repo (docs/ folder)
+    // 3. Uncomment the line below and rebuild
     @ViewBuilder
     private var adStrip: some View {
-        if !AppSettings.shared.isPro {
-            SponsorBanner()
-        }
+        // if !AppSettings.shared.isPro {
+        //     SponsorBanner()
+        // }
+        EmptyView()
     }
 
     private func keyHint(_ key: String, label: String) -> some View {

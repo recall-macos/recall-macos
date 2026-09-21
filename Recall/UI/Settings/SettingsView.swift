@@ -227,9 +227,10 @@ private struct GeneralPane: View {
                     }
             }
 
-            if !settings.isPro {
-                SponsorSettingsRow(settings: settings)
-            }
+            // ADS: uncomment when AdSense is live
+            // if !settings.isPro {
+            //     SponsorSettingsRow(settings: settings)
+            // }
 
             DetailRow("Show Menu Bar Icon") {
                 Toggle("", isOn: $settings.showMenuBarIcon).labelsHidden()
