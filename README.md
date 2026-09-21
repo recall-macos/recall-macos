@@ -2,7 +2,7 @@
 
 **Native macOS clipboard manager. Press a shortcut, search your history, paste — and it's gone.**
 
-[![Download](https://img.shields.io/badge/Download-v1.0-black?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/recall-macos/recall-macos/releases/latest/download/Recall.zip)
+[![Download](https://img.shields.io/badge/Download-v1.0-black?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/recall-macos/recall-macos/releases/latest/download/Recall.dmg)
 
 [![macOS](https://img.shields.io/badge/macOS-14%2B-black?style=flat-square&logo=apple)](https://www.apple.com/macos/)
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange?style=flat-square&logo=swift)](https://swift.org)
